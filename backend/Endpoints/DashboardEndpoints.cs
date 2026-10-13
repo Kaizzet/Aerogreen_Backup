@@ -54,7 +54,7 @@ public static class DashboardEndpoints
             x.Latest is null
                 ? null
                 : new SensorReadingResponse(
-                    x.Latest.Id, x.Latest.Temperature, x.Latest.Humidity, x.Latest.Ph, x.Latest.Tds, x.Latest.WaterLevel, x.Latest.Lux, x.Latest.RecordedAt),
+                    x.Latest.Id, x.Latest.Temperature, x.Latest.SolutionTemperature, x.Latest.Humidity, x.Latest.Ph, x.Latest.Tds, x.Latest.WaterLevel, x.Latest.Lux, x.Latest.RecordedAt),
             alertsByDevice.GetValueOrDefault(x.Device.Id, Array.Empty<DeviceAlertResponse>())));
 
         return Results.Ok(response);

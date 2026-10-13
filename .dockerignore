@@ -3,6 +3,7 @@
 .codex
 .agents
 graphify-out
+frontend
 **/bin
 **/obj
 .env

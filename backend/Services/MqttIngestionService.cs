@@ -22,6 +22,8 @@ public class MqttIngestionService : BackgroundService
     private readonly ILogger<MqttIngestionService> _logger;
     private readonly IMqttClient _mqttClient;
 
+    public bool IsConnected => _mqttClient.IsConnected;
+
     public MqttIngestionService(
         IServiceScopeFactory scopeFactory,
         IConfiguration configuration,
@@ -185,6 +187,7 @@ public class MqttIngestionService : BackgroundService
         {
             DeviceId = device.Id,
             Temperature = request.Temperature,
+            SolutionTemperature = request.SolutionTemperature,
             Humidity = request.Humidity,
             Ph = request.Ph,
             Tds = request.Tds,
@@ -193,13 +196,24 @@ public class MqttIngestionService : BackgroundService
         };
 
         db.SensorReadings.Add(reading);
-        await EvaluateAlertsAsync(db, device, reading);
+        var defaults = await db.SystemAlertDefaults.SingleOrDefaultAsync();
+        var thresholds = DeviceAlertRules.EffectiveThresholds(
+            device.HighTemperatureAlertC,
+            device.LowWaterLevelAlertPercent,
+            defaults?.HighTemperatureC ?? SystemAlertDefaults.DefaultHighTemperatureC,
+            defaults?.LowWaterLevelPercent ?? SystemAlertDefaults.DefaultLowWaterLevelPercent);
+        await EvaluateAlertsAsync(db, device, reading, thresholds.HighTemperatureC, thresholds.LowWaterLevelPercent);
         device.IsOnline = true;
         device.LastSeenAt = reading.RecordedAt;
         await db.SaveChangesAsync();
     }
 
-    private static async Task EvaluateAlertsAsync(ApplicationDbContext db, Device device, SensorReading reading)
+    private static async Task EvaluateAlertsAsync(
+        ApplicationDbContext db,
+        Device device,
+        SensorReading reading,
+        double highTemperatureC,
+        double lowWaterLevelPercent)
     {
         foreach (var type in Enum.GetValues<DeviceAlertType>())
         {
@@ -207,8 +221,8 @@ public class MqttIngestionService : BackgroundService
                 type,
                 reading.Temperature,
                 reading.WaterLevel,
-                device.HighTemperatureAlertC,
-                device.LowWaterLevelAlertPercent);
+                highTemperatureC,
+                lowWaterLevelPercent);
             if (isUnsafe is null)
             {
                 continue;
@@ -220,8 +234,8 @@ public class MqttIngestionService : BackgroundService
             if (isUnsafe.Value && activeAlert is null)
             {
                 var (measuredValue, threshold) = type == DeviceAlertType.HighTemperature
-                    ? (reading.Temperature!.Value, device.HighTemperatureAlertC!.Value)
-                    : (reading.WaterLevel!.Value, device.LowWaterLevelAlertPercent!.Value);
+                    ? (reading.Temperature!.Value, highTemperatureC)
+                    : (reading.WaterLevel!.Value, lowWaterLevelPercent);
                 db.DeviceAlerts.Add(new DeviceAlert
                 {
                     DeviceId = device.Id,
@@ -274,9 +288,14 @@ public class MqttIngestionService : BackgroundService
             }
             else
             {
-                command.Status = PumpCommandStatus.Acknowledged;
+                command.Status = status.WasSuccessful
+                    ? PumpCommandStatus.Acknowledged
+                    : PumpCommandStatus.Failed;
                 command.AcknowledgedAt = now;
                 command.AcknowledgedIsOn = status.IsOn;
+                command.FailureReason = status.WasSuccessful
+                    ? null
+                    : status.NormalizedReason ?? "DEVICE_REJECTED";
             }
         }
 

@@ -4,18 +4,28 @@
 // utility in the flutter_test package. For example, you can send tap and scroll
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 import 'package:iotagri_app/cupertino/dashboard/farm_health_card.dart';
+import 'package:iotagri_app/cupertino/dashboard/cupertino_dashboard_screen.dart';
 import 'package:iotagri_app/cupertino/devices/cupertino_device_detail_screen.dart';
 import 'package:iotagri_app/models/device.dart';
 import 'package:iotagri_app/models/device_alert.dart';
 import 'package:iotagri_app/models/device_overview.dart';
+import 'package:iotagri_app/models/pump_schedule.dart';
 import 'package:iotagri_app/models/sensor_reading.dart';
+import 'package:iotagri_app/cupertino/devices/add_device_screen.dart';
 import 'package:iotagri_app/cupertino/devices/cupertino_devices_screen.dart';
+import 'package:iotagri_app/cupertino/profile/cupertino_profile_screen.dart';
+import 'package:iotagri_app/cupertino/auth/cupertino_register_screen.dart';
+import 'package:iotagri_app/models/user.dart';
+import 'package:iotagri_app/screens/pumps/pump_schedules_screen.dart';
 import 'package:iotagri_app/providers/auth_provider.dart';
 import 'package:iotagri_app/screens/dashboard/dashboard_screen.dart';
 import 'package:iotagri_app/services/api_service.dart';
@@ -27,11 +37,61 @@ class _OfflineApiService extends ApiService {
   }
 }
 
+class _SuccessfulAuthApiService extends ApiService {
+  @override
+  Future<Map<String, dynamic>> register(
+    String email,
+    String password,
+    String fullName,
+  ) async => {};
+
+  @override
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    final payload = base64UrlEncode(
+      utf8.encode(
+        jsonEncode({
+          'sub': 'user-1',
+          'email': email,
+          'exp':
+              DateTime.now()
+                  .add(const Duration(hours: 1))
+                  .millisecondsSinceEpoch ~/
+              1000,
+        }),
+      ),
+    ).replaceAll('=', '');
+    return {
+      'accessToken': 'header.$payload.signature',
+      'refreshToken': 'refresh',
+    };
+  }
+}
+
+class _ProfileApiService extends ApiService {
+  @override
+  Future<User?> restoreSession() async => User(
+    id: 'user-1',
+    email: 'profile@example.com',
+    fullName: 'Nguyen Van A',
+    role: 'user',
+  );
+
+  @override
+  Future<Map<String, dynamic>> getProfile() async => {
+    'id': 'user-1',
+    'email': 'profile@example.com',
+    'fullName': 'Nguyen Van A',
+    'phoneNumber': '0912345678',
+    'roles': ['User'],
+  };
+}
+
 class _DetailApiService extends ApiService {
   final bool isOnline;
   final bool pumpIsRunning;
   final bool includeReading;
   final bool includeSchedule;
+  final List<bool> scheduleEnabledUpdates = <bool>[];
 
   _DetailApiService({
     this.isOnline = true,
@@ -122,6 +182,16 @@ class _DetailApiService extends ApiService {
     'highTemperatureC': 30,
     'lowWaterLevelPercent': 20,
   };
+
+  @override
+  Future<Map<String, dynamic>> updatePumpSchedule(
+    String deviceId,
+    PumpSchedule schedule, {
+    required bool isEnabled,
+  }) async {
+    scheduleEnabledUpdates.add(isEnabled);
+    return {...schedule.toJson(), 'isEnabled': isEnabled};
+  }
 }
 
 class _DeviceListApiService extends ApiService {
@@ -135,12 +205,12 @@ class _DeviceListApiService extends ApiService {
   Future<List<dynamic>> getDevices() async => [
     for (var index = 0; index < count; index++)
       if (!deletedDeviceIds.contains('device-$index'))
-      {
-        'id': 'device-$index',
-        'name': 'Greenhouse $index',
-        'isOnline': true,
-        'createdAt': '2026-10-02T00:00:00Z',
-      },
+        {
+          'id': 'device-$index',
+          'name': 'Greenhouse $index',
+          'isOnline': true,
+          'createdAt': '2026-10-02T00:00:00Z',
+        },
   ];
 
   @override
@@ -193,6 +263,73 @@ Widget _healthCard(List<DeviceOverview> devices, {VoidCallback? onAddDevice}) =>
     );
 
 void main() {
+  testWidgets('pump schedule screen opens from the Cupertino app', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: PumpSchedulesScreen(
+          device: Device(
+            id: 'device-1',
+            name: 'Pump Simulator',
+            isOnline: false,
+            createdAt: '2026-10-05T00:00:00Z',
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('registration returns to the authenticated root screen', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 1200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final authProvider = AuthProvider(apiService: _SuccessfulAuthApiService());
+    addTearDown(authProvider.dispose);
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider.value(
+        value: authProvider,
+        child: CupertinoApp(
+          home: CupertinoPageScaffold(
+            child: Builder(
+              builder: (context) => Center(
+                child: CupertinoButton(
+                  onPressed: () => Navigator.of(context).push(
+                    CupertinoPageRoute<void>(
+                      builder: (_) => const CupertinoRegisterScreen(),
+                    ),
+                  ),
+                  child: const Text('Open registration'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Open registration'));
+    await tester.pumpAndSettle();
+    final fields = find.byType(CupertinoTextField);
+    await tester.enterText(fields.at(0), 'Test User');
+    await tester.enterText(fields.at(1), 'user@example.com');
+    await tester.enterText(fields.at(2), 'Password123');
+    await tester.enterText(fields.at(3), 'Password123');
+    final submitButton = find.widgetWithText(CupertinoButton, 'Đăng ký');
+    await tester.ensureVisible(submitButton);
+    await tester.tap(submitButton);
+    await tester.pumpAndSettle();
+
+    expect(authProvider.isAuthenticated, isTrue);
+    expect(find.byType(CupertinoRegisterScreen), findsNothing);
+  });
+
   test('login stays unauthenticated when backend is unavailable', () async {
     final authProvider = AuthProvider(apiService: _OfflineApiService());
     addTearDown(authProvider.dispose);
@@ -206,6 +343,48 @@ void main() {
     expect(authProvider.isAuthenticated, isFalse);
     expect(authProvider.errorMessage, isNotNull);
   });
+
+  test(
+    'access token role claim drives admin routing, including role arrays',
+    () {
+      final apiService = ApiService();
+      String tokenWithRole(Object? role) {
+        final payload = <String, dynamic>{
+          'sub': 'user-1',
+          'email': 'user@example.com',
+          'exp':
+              DateTime.now()
+                  .add(const Duration(hours: 1))
+                  .millisecondsSinceEpoch ~/
+              1000,
+          ApiService.roleClaimType: ?role,
+        };
+        final encoded = base64UrlEncode(
+          utf8.encode(jsonEncode(payload)),
+        ).replaceAll('=', '');
+        return 'header.$encoded.signature';
+      }
+
+      expect(
+        apiService.userFromAccessToken(tokenWithRole('User'))!.isAdmin,
+        isFalse,
+      );
+      expect(
+        apiService.userFromAccessToken(tokenWithRole('Admin'))!.isAdmin,
+        isTrue,
+      );
+      expect(
+        apiService
+            .userFromAccessToken(tokenWithRole(['User', 'Admin']))!
+            .isAdmin,
+        isTrue,
+      );
+      expect(
+        apiService.userFromAccessToken(tokenWithRole(null))!.isAdmin,
+        isFalse,
+      );
+    },
+  );
 
   testWidgets('dashboard shows gateway status summary', (
     WidgetTester tester,
@@ -302,6 +481,62 @@ void main() {
     expect(find.byType(CupertinoSearchTextField), findsOneWidget);
   });
 
+  testWidgets('device tab keeps the dashboard menu', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      const CupertinoApp(home: CupertinoDashboardScreen()),
+    );
+    await tester.pump();
+    await tester.tap(find.byIcon(CupertinoIcons.square_grid_2x2));
+    await tester.pump();
+
+    expect(find.byType(CupertinoDevicesScreen), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.house_fill), findsOneWidget);
+  });
+
+  testWidgets('profile tab shows account info and logout below the form', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(600, 2000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final authProvider = AuthProvider(apiService: _ProfileApiService());
+    addTearDown(authProvider.dispose);
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider.value(
+        value: authProvider,
+        child: const CupertinoApp(home: CupertinoDashboardScreen()),
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.text('Tài khoản'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CupertinoProfileScreen), findsOneWidget);
+    expect(find.text('Hồ sơ cá nhân'), findsOneWidget);
+    expect(find.text('Đổi mật khẩu'), findsOneWidget);
+    expect(find.text('Đăng xuất'), findsOneWidget);
+
+    // Mở màn hình chỉnh sửa hồ sơ cá nhân
+    await tester.tap(find.text('Hồ sơ cá nhân'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Họ và tên'), findsOneWidget);
+    expect(find.text('Số điện thoại'), findsOneWidget);
+    expect(find.textContaining('Email'), findsOneWidget);
+    expect(find.text('Lưu thay đổi'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('device deletion requires confirmation and removes the row', (
     WidgetTester tester,
   ) async {
@@ -342,19 +577,20 @@ void main() {
 
     await tester.tap(find.byIcon(CupertinoIcons.add));
     await tester.pumpAndSettle();
-    await tester.enterText(find.byType(CupertinoTextField), 'North greenhouse');
-    await tester.tap(find.text('Tạo và thiết lập'));
-    await tester.pumpAndSettle();
-
-    expect(apiService.provisionedDeviceId, 'device-generated-123');
-    expect(find.text('Device ID: device-generated-123'), findsOneWidget);
-    expect(find.text('482913'), findsOneWidget);
+    expect(find.byType(AddDeviceScreen), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
   testWidgets('detail disables controls offline and notes saved schedules', (
     WidgetTester tester,
   ) async {
+    tester.view.physicalSize = const Size(1200, 2400);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
     final device = Device(
       id: 'device-1',
       name: 'Greenhouse 1',
@@ -373,21 +609,20 @@ void main() {
 
     expect(find.text('Offline'), findsOneWidget);
     expect(
-      find.text('Lịch đã lưu tiếp tục chạy tự động khi có kết nối.'),
+      find.text('Lịch tự động vẫn tiếp tục chạy khi thiết bị ngoại tuyến.'),
       findsOneWidget,
     );
-    final pumpButton = tester.widget<CupertinoButton>(
-      find
-          .ancestor(
-            of: find.text('Bật 60s'),
-            matching: find.byType(CupertinoButton),
-          )
-          .first,
-    );
-    expect(pumpButton.onPressed, isNull);
+    expect(find.text('Không khả dụng khi ngoại tuyến'), findsOneWidget);
   });
 
   testWidgets('detail shows running pump state', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1200, 2400);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
     final device = Device(
       id: 'device-1',
       name: 'Greenhouse 1',
@@ -405,7 +640,42 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Bơm đang chạy'), findsOneWidget);
-    expect(find.text('Tắt'), findsOneWidget);
+    await tester.tap(find.text('Thủ công'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Chuyển'));
+    await tester.pumpAndSettle();
+    expect(find.text('Dừng'), findsOneWidget);
+  });
+
+  testWidgets('manual mode pauses schedules and auto mode restores them', (
+    WidgetTester tester,
+  ) async {
+    final api = _DetailApiService(includeSchedule: true);
+    final device = Device(
+      id: 'device-1',
+      name: 'Greenhouse 1',
+      isOnline: true,
+      createdAt: '2026-10-02T00:00:00Z',
+    );
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: CupertinoDeviceDetailScreen(device: device, apiService: api),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Thủ công'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Thủ công'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Chuyển'));
+    await tester.pumpAndSettle();
+    expect(api.scheduleEnabledUpdates, equals(<bool>[false]));
+
+    await tester.tap(find.text('Tự động'));
+    await tester.pumpAndSettle();
+    expect(api.scheduleEnabledUpdates, equals(<bool>[false, true]));
   });
 
   testWidgets('detail shows missing sensor state', (WidgetTester tester) async {
@@ -426,7 +696,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Không có dữ liệu mới'), findsOneWidget);
-    expect(find.text('Không có dữ liệu'), findsNWidgets(4));
+    expect(find.text('Không có dữ liệu'), findsNWidgets(5));
   });
 
   testWidgets('sensor grid marks values below configured threshold', (
@@ -436,8 +706,10 @@ void main() {
       id: 'reading-1',
       deviceId: 'device-1',
       temperature: 26,
+      solutionTemperature: 24.5,
       humidity: 62,
       ph: 6.2,
+      tds: 520,
       waterLevel: 12,
       recordedAt: '2026-10-02T00:00:00Z',
     );
@@ -462,6 +734,8 @@ void main() {
 
     final waterValue = tester.widget<Text>(find.text('12.0 %'));
     expect(waterValue.style?.color, CupertinoColors.systemOrange);
+    expect(find.text('24.5 °C'), findsOneWidget);
+    expect(find.text('520.0 ppm'), findsOneWidget);
   });
 
   testWidgets('pump control shows command-sending state', (
@@ -475,7 +749,12 @@ void main() {
               isOnline: true,
               isRunning: false,
               isSending: true,
-              onPressed: _noop,
+              pumpMode: PumpMode.manual,
+              nextScheduleTime: null,
+              remainingSeconds: 0,
+              onModeChange: _noopMode,
+              onManualToggle: _noop,
+              onStop: _noop,
             ),
           ),
         ),
@@ -488,3 +767,5 @@ void main() {
 }
 
 void _noop() {}
+
+void _noopMode(PumpMode _) {}

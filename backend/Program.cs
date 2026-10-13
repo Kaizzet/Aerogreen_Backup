@@ -124,7 +124,8 @@ await using (var scope = app.Services.CreateAsyncScope())
 {
     await scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.MigrateAsync();
 }
-await RoleSeeder.SeedAsync(app.Services, app.Configuration);
+await RoleSeeder.SeedAsync(app.Services);
+await AdminBootstrapper.SeedAsync(app.Services, app.Configuration);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -146,6 +147,7 @@ app.UseRateLimiter();
 
 app.MapAuthEndpoints();
 app.MapAdminEndpoints();
+app.MapTicketEndpoints();
 app.MapDeviceEndpoints();
 app.MapDeviceProvisioningEndpoints();
 app.MapSensorEndpoints();

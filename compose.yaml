@@ -39,6 +39,18 @@ services:
       - mosquitto-data:/mosquitto/data
       - mosquitto-log:/mosquitto/log
 
+  pump-simulator:
+    image: eclipse-mosquitto:2
+    profiles: ["pump-simulator"]
+    command: ["/bin/sh", "/simulator.sh"]
+    environment:
+      SIMULATOR_DEVICE_KEY: ${PUMP_SIMULATOR_DEVICE_KEY:-}
+    volumes:
+      - ./tools/pump-simulator.sh:/simulator.sh:ro
+    depends_on:
+      mosquitto:
+        condition: service_started
+
   api:
     build: .
     ports:
@@ -54,9 +66,9 @@ services:
       Jwt__Issuer: IOTAgriBackend
       Jwt__Audience: IOTAgriBackendClients
       Jwt__Key: ${JWT_KEY}
-      Admin__Email: ${ADMIN_EMAIL:-}
-      Admin__Password: ${ADMIN_PASSWORD:-}
-      Admin__FullName: ${ADMIN_FULL_NAME:-}
+      AdminBootstrap__Email: ${ADMIN_BOOTSTRAP_EMAIL:-}
+      AdminBootstrap__Password: ${ADMIN_BOOTSTRAP_PASSWORD:-}
+      AdminBootstrap__FullName: ${ADMIN_BOOTSTRAP_FULL_NAME:-Administrator}
       Mqtt__Host: mosquitto
       Mqtt__Port: 1883
       Mqtt__UseTls: "false"

@@ -8,6 +8,8 @@ public class PumpSchedule
     public bool IsEnabled { get; set; } = true;
     public int WeekdayMask { get; set; }
     public TimeOnly StartTime { get; set; }
+    public TimeOnly? EndTime { get; set; }
+    public int? IntervalMinutes { get; set; }
     public int DurationSeconds { get; set; }
     public string TimeZone { get; set; } = string.Empty;
     public DateTime? LastDispatchedOccurrenceUtc { get; set; }

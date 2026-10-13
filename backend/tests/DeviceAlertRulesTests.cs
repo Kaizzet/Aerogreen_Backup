@@ -52,4 +52,13 @@ public class DeviceAlertRulesTests
             null,
             null));
     }
+
+    [Fact]
+    public void Device_thresholds_override_global_defaults_independently()
+    {
+        var thresholds = DeviceAlertRules.EffectiveThresholds(42, null, 35, 20);
+
+        Assert.Equal(42, thresholds.HighTemperatureC);
+        Assert.Equal(20, thresholds.LowWaterLevelPercent);
+    }
 }

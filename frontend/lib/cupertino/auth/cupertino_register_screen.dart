@@ -22,6 +22,7 @@ class _CupertinoRegisterScreenState extends State<CupertinoRegisterScreen> {
   String? _emailError;
   String? _passwordError;
   String? _confirmError;
+  String? _registerError;
 
   @override
   void dispose() {
@@ -54,6 +55,7 @@ class _CupertinoRegisterScreenState extends State<CupertinoRegisterScreen> {
           : password != confirmation
           ? 'Mật khẩu xác nhận không khớp.'
           : null;
+      _registerError = null;
     });
     if (_nameError != null ||
         _emailError != null ||
@@ -68,29 +70,13 @@ class _CupertinoRegisterScreenState extends State<CupertinoRegisterScreen> {
       name,
     );
     if (!success && mounted) {
-      _showMessage(
-        context.read<AuthProvider>().errorMessage ?? 'Đăng ký thất bại.',
-      );
+      setState(() {
+        _registerError = context.read<AuthProvider>().errorMessage ?? 'Đăng ký thất bại.';
+      });
     }
-  }
-
-  void _showMessage(String message) {
-    showCupertinoDialog<void>(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('Kiểm tra thông tin'),
-        content: Padding(
-          padding: const EdgeInsets.only(top: 8),
-          child: Text(message),
-        ),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Đã hiểu'),
-          ),
-        ],
-      ),
-    );
+    if (success && mounted) {
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    }
   }
 
   @override
@@ -145,8 +131,11 @@ class _CupertinoRegisterScreenState extends State<CupertinoRegisterScreen> {
                       icon: CupertinoIcons.person,
                       errorText: _nameError,
                       onChanged: (_) {
-                        if (_nameError != null) {
-                          setState(() => _nameError = null);
+                        if (_nameError != null || _registerError != null) {
+                          setState(() {
+                            _nameError = null;
+                            _registerError = null;
+                          });
                         }
                       },
                     ),
@@ -159,8 +148,11 @@ class _CupertinoRegisterScreenState extends State<CupertinoRegisterScreen> {
                       keyboardType: TextInputType.emailAddress,
                       errorText: _emailError,
                       onChanged: (_) {
-                        if (_emailError != null) {
-                          setState(() => _emailError = null);
+                        if (_emailError != null || _registerError != null) {
+                          setState(() {
+                            _emailError = null;
+                            _registerError = null;
+                          });
                         }
                       },
                     ),
@@ -179,8 +171,11 @@ class _CupertinoRegisterScreenState extends State<CupertinoRegisterScreen> {
                       ),
                       errorText: _passwordError,
                       onChanged: (_) {
-                        if (_passwordError != null) {
-                          setState(() => _passwordError = null);
+                        if (_passwordError != null || _registerError != null) {
+                          setState(() {
+                            _passwordError = null;
+                            _registerError = null;
+                          });
                         }
                       },
                     ),
@@ -198,17 +193,43 @@ class _CupertinoRegisterScreenState extends State<CupertinoRegisterScreen> {
                       ),
                       errorText: _confirmError,
                       onChanged: (_) {
-                        if (_confirmError != null) {
-                          setState(() => _confirmError = null);
+                        if (_confirmError != null || _registerError != null) {
+                          setState(() {
+                            _confirmError = null;
+                            _registerError = null;
+                          });
                         }
                       },
                       onSubmitted: (_) => _submit(),
                     ),
+                    if (_registerError != null)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8, top: 8),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              CupertinoIcons.xmark_circle_fill,
+                              size: 16,
+                              color: CupertinoColors.systemRed,
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                _registerError!,
+                                style: const TextStyle(
+                                  color: CupertinoColors.systemRed,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     const SizedBox(height: 24),
                     Consumer<AuthProvider>(
                       builder: (context, authProvider, _) =>
                           CupertinoButton.filled(
-                            minSize: 52,
+                            minimumSize: const Size(52, 52),
                             borderRadius: BorderRadius.circular(16),
                             onPressed: authProvider.isLoading ? null : _submit,
                             child: authProvider.isLoading
@@ -241,7 +262,7 @@ class _CupertinoRegisterScreenState extends State<CupertinoRegisterScreen> {
   Widget _visibilityButton(bool obscured, VoidCallback onPressed) =>
       CupertinoButton(
         padding: const EdgeInsets.all(12),
-        minSize: 44,
+        minimumSize: const Size(44, 44),
         onPressed: onPressed,
         child: Icon(
           obscured ? CupertinoIcons.eye : CupertinoIcons.eye_slash,

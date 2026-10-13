@@ -8,6 +8,7 @@ public class SensorReading
     public Device? Device { get; set; }
 
     public double? Temperature { get; set; }
+    public double? SolutionTemperature { get; set; }
     public double? Humidity { get; set; }
     public double? Ph { get; set; }
     public double? Tds { get; set; }

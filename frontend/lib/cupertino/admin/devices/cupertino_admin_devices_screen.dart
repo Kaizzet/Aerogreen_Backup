@@ -10,8 +10,9 @@
 // ============================================================
 
 import 'package:flutter/cupertino.dart';
+import '../widgets/admin_logout_button.dart';
 
-import '../../../services/mock_admin_service.dart';
+import '../../../services/api_service.dart';
 import 'cupertino_admin_device_detail.dart';
 import 'widgets/admin_device_card.dart';
 import 'widgets/device_filter_chips.dart';
@@ -26,7 +27,7 @@ class CupertinoAdminDevicesScreen extends StatefulWidget {
 
 class _CupertinoAdminDevicesScreenState
     extends State<CupertinoAdminDevicesScreen> {
-  final _mockService = MockAdminService();
+  final _apiService = ApiService();
   final _searchController = TextEditingController();
 
   // _allDevices: dữ liệu gốc
@@ -50,18 +51,26 @@ class _CupertinoAdminDevicesScreenState
     super.dispose();
   }
 
-  // Load devices từ mock service
   Future<void> _loadDevices() async {
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 300));
-
-    _allDevices = _mockService.getMockDevices();
-
-    if (!mounted) return;
-    setState(() {
-      _isLoading = false;
-      _applyFilter();
-    });
+    try {
+      final response = await _apiService.getAdminDevices();
+      _allDevices = (response['items'] as List<dynamic>? ?? [])
+          .map(
+            (item) => <String, dynamic>{
+              ...(item as Map<String, dynamic>),
+              'isPumping': item['isPumpOn'] == true,
+            },
+          )
+          .toList();
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _applyFilter();
+        });
+      }
+    }
   }
 
   // Áp filter + search
@@ -103,12 +112,15 @@ class _CupertinoAdminDevicesScreenState
   Map<DeviceFilter, int> _getCounts() {
     return {
       DeviceFilter.all: _allDevices.length,
-      DeviceFilter.online:
-      _allDevices.where((d) => d['isOnline'] == true).length,
-      DeviceFilter.offline:
-      _allDevices.where((d) => d['isOnline'] != true).length,
-      DeviceFilter.pumping:
-      _allDevices.where((d) => d['isPumping'] == true).length,
+      DeviceFilter.online: _allDevices
+          .where((d) => d['isOnline'] == true)
+          .length,
+      DeviceFilter.offline: _allDevices
+          .where((d) => d['isOnline'] != true)
+          .length,
+      DeviceFilter.pumping: _allDevices
+          .where((d) => d['isPumping'] == true)
+          .length,
     };
   }
 
@@ -120,11 +132,17 @@ class _CupertinoAdminDevicesScreenState
         // Navigation bar
         CupertinoSliverNavigationBar(
           largeTitle: const Text('Thiết bị'),
-          trailing: CupertinoButton(
-            padding: EdgeInsets.zero,
-            minimumSize: const Size(44, 44),
-            onPressed: _loadDevices,
-            child: const Icon(CupertinoIcons.arrow_2_circlepath),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(44, 44),
+                onPressed: _loadDevices,
+                child: const Icon(CupertinoIcons.arrow_2_circlepath),
+              ),
+              const AdminLogoutButton(),
+            ],
           ),
         ),
 
@@ -165,9 +183,7 @@ class _CupertinoAdminDevicesScreenState
         if (_isLoading)
           const SliverFillRemaining(
             hasScrollBody: false,
-            child: Center(
-              child: CupertinoActivityIndicator(radius: 14),
-            ),
+            child: Center(child: CupertinoActivityIndicator(radius: 14)),
           )
         else if (_filteredDevices.isEmpty)
           SliverFillRemaining(
@@ -178,30 +194,27 @@ class _CupertinoAdminDevicesScreenState
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
             sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                  final device = _filteredDevices[index];
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final device = _filteredDevices[index];
 
-                  // 🐛 FIX BUG: ValueKey dựa trên status + pumping
-                  // → Khi device đổi trạng thái, key thay đổi, widget rebuild
-                  final key = ValueKey(
-                    'device_${device['id']}_'
-                        '${device['isOnline']}_'
-                        '${device['isPumping']}',
-                  );
+                // 🐛 FIX BUG: ValueKey dựa trên status + pumping
+                // → Khi device đổi trạng thái, key thay đổi, widget rebuild
+                final key = ValueKey(
+                  'device_${device['id']}_'
+                  '${device['isOnline']}_'
+                  '${device['isPumping']}',
+                );
 
-                  return Padding(
-                    key: key,
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: AdminDeviceCard(
-                      device: device,
-                      onTap: () => _openDeviceDetail(device),
-                      onLongPress: () => _showDeviceActions(device),
-                    ),
-                  );
-                },
-                childCount: _filteredDevices.length,
-              ),
+                return Padding(
+                  key: key,
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: AdminDeviceCard(
+                    device: device,
+                    onTap: () => _openDeviceDetail(device),
+                    onLongPress: () => _showDeviceActions(device),
+                  ),
+                );
+              }, childCount: _filteredDevices.length),
             ),
           ),
       ],
@@ -282,14 +295,20 @@ class _CupertinoAdminDevicesScreenState
                   : 'Đổi owner',
             ),
           ),
-          CupertinoActionSheetAction(
-            isDestructiveAction: true,
-            onPressed: () {
-              Navigator.of(actionContext).pop();
-              _confirmDelete(device);
-            },
-            child: const Text('Xóa thiết bị'),
-          ),
+          if (device['ownerId'] != null && device['ownerId'] != '')
+            CupertinoActionSheetAction(
+              isDestructiveAction: true,
+              onPressed: () async {
+                Navigator.of(actionContext).pop();
+                await _apiService.updateAdminDeviceOwner(
+                  device['id'] as String,
+                  null,
+                );
+                if (!mounted) return;
+                await _loadDevices();
+              },
+              child: const Text('Hủy gán owner'),
+            ),
         ],
         cancelButton: CupertinoActionSheetAction(
           onPressed: () => Navigator.of(actionContext).pop(),
@@ -299,85 +318,32 @@ class _CupertinoAdminDevicesScreenState
     );
   }
 
-  // Gán device cho user (mock)
-  void _assignDevice(Map<String, dynamic> device) {
-    final users = _mockService.getMockUsers();
+  Future<void> _assignDevice(Map<String, dynamic> device) async {
+    final response = await _apiService.getAdminUsers();
+    if (!mounted) return;
+    final users = response['items'] as List<dynamic>? ?? [];
     showCupertinoModalPopup<void>(
       context: context,
       builder: (actionContext) => CupertinoActionSheet(
         title: const Text('Chọn user để gán'),
-        actions: users.take(5).map((user) {
+        actions: users.map((item) {
+          final user = item as Map<String, dynamic>;
           return CupertinoActionSheetAction(
-            onPressed: () {
+            onPressed: () async {
               Navigator.of(actionContext).pop();
-              setState(() {
-                device['ownerId'] = user.id;
-                device['ownerEmail'] = user.email;
-              });
-              _applyFilter();
-              _showToast('Đã gán cho ${user.email}');
+              await _apiService.updateAdminDeviceOwner(
+                device['id'] as String,
+                user['id'] as String,
+              );
+              if (mounted) await _loadDevices();
             },
-            child: Text(user.email),
+            child: Text(user['email'] as String? ?? ''),
           );
         }).toList(),
         cancelButton: CupertinoActionSheetAction(
           onPressed: () => Navigator.of(actionContext).pop(),
           child: const Text('Hủy'),
         ),
-      ),
-    );
-  }
-
-  // Xác nhận xóa device
-  void _confirmDelete(Map<String, dynamic> device) {
-    showCupertinoDialog<void>(
-      context: context,
-      builder: (dialogContext) => CupertinoAlertDialog(
-        title: const Text('Xóa thiết bị'),
-        content: Padding(
-          padding: const EdgeInsets.only(top: 8),
-          child: Text(
-            'Bạn có chắc muốn xóa "${device['name']}"?\n'
-                'Hành động này không thể hoàn tác.',
-          ),
-        ),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Hủy'),
-          ),
-          CupertinoDialogAction(
-            isDestructiveAction: true,
-            onPressed: () {
-              Navigator.of(dialogContext).pop();
-              setState(() {
-                _allDevices.removeWhere((d) => d['id'] == device['id']);
-              });
-              _applyFilter();
-              _showToast('Đã xóa thiết bị');
-            },
-            child: const Text('Xóa'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Toast thông báo
-  void _showToast(String message) {
-    showCupertinoDialog<void>(
-      context: context,
-      builder: (dialogContext) => CupertinoAlertDialog(
-        content: Padding(
-          padding: const EdgeInsets.only(top: 8),
-          child: Text(message),
-        ),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('OK'),
-          ),
-        ],
       ),
     );
   }

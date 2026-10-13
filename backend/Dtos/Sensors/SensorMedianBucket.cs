@@ -3,6 +3,7 @@ namespace IOTAgriBackend.Dtos.Sensors;
 public record SensorMedianBucket(
     DateTime BucketStart,
     double? MedianTemperature,
+    double? MedianSolutionTemperature,
     double? MedianHumidity,
     double? MedianPh,
     double? MedianTds,
@@ -24,7 +25,7 @@ public static class SensorMedianBuckets
                 var bucketStart = start.AddTicks(interval.Ticks * index);
                 return buckets.TryGetValue(bucketStart, out var bucket)
                     ? bucket
-                    : new SensorMedianBucket(bucketStart, null, null, null, null, null, null, 0);
+                    : new SensorMedianBucket(bucketStart, null, null, null, null, null, null, null, 0);
             })
             .ToList();
 }

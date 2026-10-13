@@ -10,8 +10,9 @@
 // ============================================================
 
 import 'package:flutter/cupertino.dart';
+import '../widgets/admin_logout_button.dart';
 
-import '../../../services/mock_admin_service.dart';
+import '../../../services/api_service.dart';
 import 'cupertino_ticket_detail_screen.dart';
 import 'widgets/ticket_filter_chips.dart';
 import 'widgets/ticket_list_tile.dart';
@@ -24,7 +25,7 @@ class CupertinoTicketsScreen extends StatefulWidget {
 }
 
 class _CupertinoTicketsScreenState extends State<CupertinoTicketsScreen> {
-  final _mockService = MockAdminService();
+  final _apiService = ApiService();
   final _searchController = TextEditingController();
 
   List<Map<String, dynamic>> _allTickets = [];
@@ -33,6 +34,7 @@ class _CupertinoTicketsScreenState extends State<CupertinoTicketsScreen> {
   TicketFilter _selectedFilter = TicketFilter.all;
   String _searchQuery = '';
   bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
@@ -46,18 +48,28 @@ class _CupertinoTicketsScreenState extends State<CupertinoTicketsScreen> {
     super.dispose();
   }
 
-  // Load tickets từ mock service
+  // Load tickets từ ApiService
   Future<void> _loadTickets() async {
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 300));
-
-    _allTickets = _mockService.getMockTickets();
-
-    if (!mounted) return;
-    setState(() {
-      _isLoading = false;
+    try {
+      final response = await _apiService.getAdminTickets();
+      final tickets = (response['items'] as List<dynamic>? ?? [])
+          .map((item) => Map<String, dynamic>.from(item as Map))
+          .toList();
+      if (!mounted) return;
+      setState(() {
+        _allTickets = tickets;
+        _error = null;
+        _isLoading = false;
+      });
       _applyFilter();
-    });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _error = '$error';
+        _isLoading = false;
+      });
+    }
   }
 
   // Áp filter + search
@@ -116,11 +128,17 @@ class _CupertinoTicketsScreenState extends State<CupertinoTicketsScreen> {
         // Navigation bar
         CupertinoSliverNavigationBar(
           largeTitle: const Text('Support Tickets'),
-          trailing: CupertinoButton(
-            padding: EdgeInsets.zero,
-            minimumSize: const Size(44, 44),
-            onPressed: _loadTickets,
-            child: const Icon(CupertinoIcons.arrow_2_circlepath),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(44, 44),
+                onPressed: _loadTickets,
+                child: const Icon(CupertinoIcons.arrow_2_circlepath),
+              ),
+              const AdminLogoutButton(),
+            ],
           ),
         ),
 
@@ -164,6 +182,11 @@ class _CupertinoTicketsScreenState extends State<CupertinoTicketsScreen> {
             child: Center(
               child: CupertinoActivityIndicator(radius: 14),
             ),
+          )
+        else if (_error != null)
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Center(child: CupertinoButton(onPressed: _loadTickets, child: Text(_error!))),
           )
         else if (_filteredTickets.isEmpty)
           SliverFillRemaining(
@@ -242,23 +265,14 @@ class _CupertinoTicketsScreenState extends State<CupertinoTicketsScreen> {
 
   // Mở chi tiết ticket
   Future<void> _openTicketDetail(Map<String, dynamic> ticket) async {
-    final updatedTicket = await Navigator.of(context).push<Map<String, dynamic>>(
+    await Navigator.of(context).push<Map<String, dynamic>>(
       CupertinoPageRoute(
         builder: (_) => CupertinoTicketDetailScreen(ticket: ticket),
       ),
     );
 
     // Nếu Detail trả về data mới → update list
-    if (updatedTicket != null && mounted) {
-      final index =
-      _allTickets.indexWhere((t) => t['id'] == updatedTicket['id']);
-      if (index != -1) {
-        setState(() {
-          _allTickets[index] = Map<String, dynamic>.from(updatedTicket);
-        });
-        _applyFilter();
-      }
-    }
+    if (mounted) await _loadTickets();
   }
 
   // Action sheet khi long-press ticket
@@ -315,7 +329,7 @@ class _CupertinoTicketsScreenState extends State<CupertinoTicketsScreen> {
   }
 
   // Đổi status (từ action sheet)
-  void _changeStatus(Map<String, dynamic> ticket) {
+  Future<void> _changeStatus(Map<String, dynamic> ticket) async {
     final current = ticket['status'] as String? ?? 'open';
     String newStatus;
     String label;
@@ -337,11 +351,14 @@ class _CupertinoTicketsScreenState extends State<CupertinoTicketsScreen> {
         return;
     }
 
-    setState(() {
-      ticket['status'] = newStatus;
-    });
-    _applyFilter();
-    _showToast(label);
+    try {
+      await _apiService.updateAdminTicketStatus(ticket['id'].toString(), newStatus);
+      if (!mounted) return;
+      await _loadTickets();
+      if (mounted) _showToast(label);
+    } catch (error) {
+      if (mounted) _showToast('$error');
+    }
   }
 
   // Đổi priority (từ action sheet)
@@ -352,29 +369,23 @@ class _CupertinoTicketsScreenState extends State<CupertinoTicketsScreen> {
         title: const Text('Chọn độ ưu tiên'),
         actions: [
           CupertinoActionSheetAction(
-            onPressed: () {
+            onPressed: () async {
               Navigator.of(actionContext).pop();
-              setState(() => ticket['priority'] = 'high');
-              _applyFilter();
-              _showToast('Đã đổi sang ưu tiên CAO');
+              await _updatePriority(ticket, 'high');
             },
             child: const Text('Cao'),
           ),
           CupertinoActionSheetAction(
-            onPressed: () {
+            onPressed: () async {
               Navigator.of(actionContext).pop();
-              setState(() => ticket['priority'] = 'medium');
-              _applyFilter();
-              _showToast('Đã đổi sang ưu tiên TRUNG BÌNH');
+              await _updatePriority(ticket, 'medium');
             },
             child: const Text('Trung bình'),
           ),
           CupertinoActionSheetAction(
-            onPressed: () {
+            onPressed: () async {
               Navigator.of(actionContext).pop();
-              setState(() => ticket['priority'] = 'low');
-              _applyFilter();
-              _showToast('Đã đổi sang ưu tiên THẤP');
+              await _updatePriority(ticket, 'low');
             },
             child: const Text('Thấp'),
           ),
@@ -385,6 +396,16 @@ class _CupertinoTicketsScreenState extends State<CupertinoTicketsScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _updatePriority(Map<String, dynamic> ticket, String priority) async {
+    try {
+      await _apiService.updateAdminTicketPriority(ticket['id'].toString(), priority);
+      if (!mounted) return;
+      await _loadTickets();
+    } catch (error) {
+      if (mounted) _showToast('$error');
+    }
   }
 
   void _showToast(String message) {

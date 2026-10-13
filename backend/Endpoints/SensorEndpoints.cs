@@ -48,7 +48,7 @@ public static class SensorEndpoints
             .Where(r => r.DeviceId == deviceId)
             .OrderByDescending(r => r.RecordedAt)
             .Take(Math.Clamp(take, 1, 500))
-            .Select(r => new SensorReadingResponse(r.Id, r.Temperature, r.Humidity, r.Ph, r.Tds, r.WaterLevel, r.Lux, r.RecordedAt))
+            .Select(r => new SensorReadingResponse(r.Id, r.Temperature, r.SolutionTemperature, r.Humidity, r.Ph, r.Tds, r.WaterLevel, r.Lux, r.RecordedAt))
             .ToListAsync();
 
         return Results.Ok(readings);
@@ -89,6 +89,7 @@ public static class SensorEndpoints
             """
             SELECT date_trunc({0}, "RecordedAt") AS "BucketStart",
                    AVG("Temperature") AS "AvgTemperature", MIN("Temperature") AS "MinTemperature", MAX("Temperature") AS "MaxTemperature",
+                   AVG("SolutionTemperature") AS "AvgSolutionTemperature", MIN("SolutionTemperature") AS "MinSolutionTemperature", MAX("SolutionTemperature") AS "MaxSolutionTemperature",
                    AVG("Humidity") AS "AvgHumidity", MIN("Humidity") AS "MinHumidity", MAX("Humidity") AS "MaxHumidity",
                    AVG("Ph") AS "AvgPh", MIN("Ph") AS "MinPh", MAX("Ph") AS "MaxPh",
                    AVG("Tds") AS "AvgTds", MIN("Tds") AS "MinTds", MAX("Tds") AS "MaxTds",
@@ -175,6 +176,7 @@ public static class SensorEndpoints
             """
             SELECT date_trunc({0}, "RecordedAt") AS "BucketStart",
                    percentile_cont(0.5) WITHIN GROUP (ORDER BY "Temperature") AS "MedianTemperature",
+                   percentile_cont(0.5) WITHIN GROUP (ORDER BY "SolutionTemperature") AS "MedianSolutionTemperature",
                    percentile_cont(0.5) WITHIN GROUP (ORDER BY "Humidity") AS "MedianHumidity",
                    percentile_cont(0.5) WITHIN GROUP (ORDER BY "Ph") AS "MedianPh",
                    percentile_cont(0.5) WITHIN GROUP (ORDER BY "Tds") AS "MedianTds",

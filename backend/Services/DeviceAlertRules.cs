@@ -4,6 +4,13 @@ namespace IOTAgriBackend.Services;
 
 public static class DeviceAlertRules
 {
+    public static (double HighTemperatureC, double LowWaterLevelPercent) EffectiveThresholds(
+        double? deviceHighTemperatureC,
+        double? deviceLowWaterLevelPercent,
+        double systemHighTemperatureC,
+        double systemLowWaterLevelPercent) =>
+        (deviceHighTemperatureC ?? systemHighTemperatureC, deviceLowWaterLevelPercent ?? systemLowWaterLevelPercent);
+
     public static bool? IsUnsafe(
         DeviceAlertType type,
         double? temperature,

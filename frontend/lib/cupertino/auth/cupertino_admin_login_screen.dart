@@ -18,6 +18,7 @@ class _CupertinoAdminLoginScreenState
   bool _obscurePassword = true;
   String? _emailError;
   String? _passwordError;
+  String? _loginError;
 
   @override
   void initState() {
@@ -47,6 +48,7 @@ class _CupertinoAdminLoginScreenState
           : password.length < 8
           ? 'Mật khẩu phải có ít nhất 8 ký tự.'
           : null;
+      _loginError = null;
     });
     if (_emailError != null || _passwordError != null) return;
 
@@ -59,14 +61,16 @@ class _CupertinoAdminLoginScreenState
     if (success && !authProvider.user!.isAdmin) {
       await authProvider.logout();
       if (!mounted) return;
-      _showMessage(
-        'Tài khoản này không có quyền quản trị.\nVui lòng dùng tài khoản admin.',
-      );
+      setState(() {
+        _loginError = 'Tài khoản này không có quyền quản trị. Vui lòng dùng tài khoản admin.';
+      });
       return;
     }
 
     if (!success && mounted) {
-      _showMessage(authProvider.errorMessage ?? 'Đăng nhập thất bại.');
+      setState(() {
+        _loginError = authProvider.errorMessage ?? 'Email hoặc mật khẩu không đúng.';
+      });
       return;
     }
 
@@ -76,32 +80,13 @@ class _CupertinoAdminLoginScreenState
     }
   }
 
-  void _showMessage(String message) {
-    showCupertinoDialog<void>(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('Không thể đăng nhập'),
-        content: Padding(
-          padding: const EdgeInsets.only(top: 8),
-          child: Text(message),
-        ),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Đã hiểu'),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
-          minSize: 44,
+          minimumSize: const Size(44, 44),
           onPressed: () => Navigator.of(context).pop(),
           child: const Row(
             mainAxisSize: MainAxisSize.min,
@@ -203,8 +188,11 @@ class _CupertinoAdminLoginScreenState
                           ),
                           padding: const EdgeInsets.all(16),
                           onChanged: (_) {
-                            if (_emailError != null) {
-                              setState(() => _emailError = null);
+                            if (_emailError != null || _loginError != null) {
+                              setState(() {
+                                _emailError = null;
+                                _loginError = null;
+                              });
                             }
                           },
                           decoration: _fieldDecoration(
@@ -229,7 +217,7 @@ class _CupertinoAdminLoginScreenState
                           ),
                           suffix: CupertinoButton(
                             padding: const EdgeInsets.all(12),
-                            minSize: 44,
+                            minimumSize: const Size(44, 44),
                             onPressed: () => setState(
                                   () => _obscurePassword = !_obscurePassword,
                             ),
@@ -242,8 +230,11 @@ class _CupertinoAdminLoginScreenState
                           ),
                           padding: const EdgeInsets.fromLTRB(14, 16, 4, 16),
                           onChanged: (_) {
-                            if (_passwordError != null) {
-                              setState(() => _passwordError = null);
+                            if (_passwordError != null || _loginError != null) {
+                              setState(() {
+                                _passwordError = null;
+                                _loginError = null;
+                              });
                             }
                           },
                           decoration: _fieldDecoration(
@@ -253,11 +244,34 @@ class _CupertinoAdminLoginScreenState
                         ),
                       ),
                       if (_passwordError != null) _FieldError(_passwordError!),
+                      if (_loginError != null)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8, top: 8),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                CupertinoIcons.xmark_circle_fill,
+                                size: 16,
+                                color: CupertinoColors.systemRed,
+                              ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  _loginError!,
+                                  style: const TextStyle(
+                                    color: CupertinoColors.systemRed,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       const SizedBox(height: 28),
                       Consumer<AuthProvider>(
                         builder: (context, authProvider, _) {
                           return CupertinoButton(
-                            minSize: 52,
+                            minimumSize: const Size(52, 52),
                             color: Color(0xFF34C759),
                             borderRadius: BorderRadius.circular(16),
                             onPressed:

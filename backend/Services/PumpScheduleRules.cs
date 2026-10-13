@@ -7,12 +7,16 @@ public static class PumpScheduleRules
     private const int AllDaysMask = 0b1111111;
     private const long TicksPerWeek = TimeSpan.TicksPerDay * 7;
 
-    public static string? Validate(bool? isEnabled, int weekdayMask, TimeOnly? startTime, int durationSeconds, string? timeZone, int maximumDurationSeconds)
+    public static string? Validate(bool? isEnabled, int weekdayMask, TimeOnly? startTime, int durationSeconds, string? timeZone, int maximumDurationSeconds, TimeOnly? endTime = null, int? intervalMinutes = null)
     {
         if (isEnabled is null) return "isEnabled is required.";
         if (weekdayMask <= 0 || (weekdayMask & ~AllDaysMask) != 0) return "weekdayMask must include one or more days from Sunday (1) through Saturday (64).";
         if (startTime is null) return "startTime is required.";
         if (durationSeconds <= 0 || durationSeconds > maximumDurationSeconds) return $"durationSeconds must be between 1 and {maximumDurationSeconds}.";
+        if (endTime.HasValue != intervalMinutes.HasValue) return "endTime and intervalMinutes must be provided together.";
+        if (intervalMinutes is <= 0 or > 60) return "intervalMinutes must be between 1 and 60.";
+        if (endTime == startTime) return "endTime must differ from startTime.";
+        if (intervalMinutes is not null && durationSeconds >= intervalMinutes * 60) return "durationSeconds must be shorter than intervalMinutes.";
         if (string.IsNullOrWhiteSpace(timeZone) || !TimeZoneInfo.TryConvertIanaIdToWindowsId(timeZone, out _)) return "timeZone must be a valid IANA time zone.";
         return null;
     }
@@ -31,7 +35,10 @@ public static class PumpScheduleRules
         for (var day = 0; day < 7; day++)
         {
             if ((schedule.WeekdayMask & (1 << day)) != 0)
-                yield return (TimeSpan.TicksPerDay * day) + schedule.StartTime.Ticks;
+            {
+                foreach (var offset in OccurrenceOffsets(schedule))
+                    yield return (TimeSpan.TicksPerDay * day) + schedule.StartTime.Ticks + offset.Ticks;
+            }
         }
     }
 
@@ -47,31 +54,50 @@ public static class PumpScheduleRules
 
     public static bool TryGetDueOccurrenceUtc(PumpSchedule schedule, DateTime utcNow, TimeSpan dueWindow, out DateTime occurrenceUtc)
     {
-        occurrenceUtc = default;
-        if (!schedule.IsEnabled || dueWindow <= TimeSpan.Zero) return false;
+        occurrenceUtc = GetDueOccurrencesUtc(schedule, utcNow, dueWindow).LastOrDefault();
+        return occurrenceUtc != default;
+    }
+
+    public static List<DateTime> GetDueOccurrencesUtc(PumpSchedule schedule, DateTime utcNow, TimeSpan dueWindow)
+    {
+        if (!schedule.IsEnabled || dueWindow <= TimeSpan.Zero) return [];
 
         TimeZoneInfo timeZone;
-        try
-        {
-            timeZone = TimeZoneInfo.FindSystemTimeZoneById(schedule.TimeZone);
-        }
-        catch (TimeZoneNotFoundException)
-        {
-            return false;
-        }
-        catch (InvalidTimeZoneException)
-        {
-            return false;
-        }
+        try { timeZone = TimeZoneInfo.FindSystemTimeZoneById(schedule.TimeZone); }
+        catch (TimeZoneNotFoundException) { return []; }
+        catch (InvalidTimeZoneException) { return []; }
 
         var localNow = TimeZoneInfo.ConvertTimeFromUtc(utcNow, timeZone);
-        if ((schedule.WeekdayMask & (1 << (int)localNow.DayOfWeek)) == 0) return false;
+        var occurrences = new List<DateTime>();
+        for (var dayOffset = -1; dayOffset <= 0; dayOffset++)
+        {
+            var date = localNow.Date.AddDays(dayOffset);
+            if ((schedule.WeekdayMask & (1 << (int)date.DayOfWeek)) == 0) continue;
 
-        var localOccurrence = DateTime.SpecifyKind(localNow.Date + schedule.StartTime.ToTimeSpan(), DateTimeKind.Unspecified);
-        if (timeZone.IsInvalidTime(localOccurrence)) return false;
+            foreach (var offset in OccurrenceOffsets(schedule))
+            {
+                var localOccurrence = DateTime.SpecifyKind(date + schedule.StartTime.ToTimeSpan(), DateTimeKind.Unspecified).Add(offset);
+                if (timeZone.IsInvalidTime(localOccurrence)) continue;
 
-        occurrenceUtc = TimeZoneInfo.ConvertTimeToUtc(localOccurrence, timeZone);
-        return occurrenceUtc <= utcNow && utcNow - occurrenceUtc <= dueWindow;
+                var occurrenceUtc = TimeZoneInfo.ConvertTimeToUtc(localOccurrence, timeZone);
+                if (occurrenceUtc <= utcNow && utcNow - occurrenceUtc <= dueWindow)
+                    occurrences.Add(occurrenceUtc);
+            }
+        }
+
+        return occurrences.OrderBy(occurrence => occurrence).ToList();
+    }
+
+    private static IEnumerable<TimeSpan> OccurrenceOffsets(PumpSchedule schedule)
+    {
+        yield return TimeSpan.Zero;
+        if (schedule.EndTime is not TimeOnly endTime || schedule.IntervalMinutes is not int intervalMinutes) yield break;
+
+        var start = schedule.StartTime.ToTimeSpan();
+        var window = endTime.ToTimeSpan() - start;
+        if (window <= TimeSpan.Zero) window += TimeSpan.FromDays(1);
+        for (var elapsed = TimeSpan.FromMinutes(intervalMinutes); elapsed < window; elapsed += TimeSpan.FromMinutes(intervalMinutes))
+            yield return elapsed;
     }
 
     private static bool Overlaps(long firstStart, long firstEnd, long secondStart, long secondEnd) =>

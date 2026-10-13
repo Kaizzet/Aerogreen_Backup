@@ -19,6 +19,8 @@ public static class AuthEndpoints
         group.MapPost("/login", LoginAsync);
         group.MapPost("/refresh", RefreshAsync);
         group.MapPost("/logout", LogoutAsync).RequireAuthorization();
+        group.MapGet("/profile", GetProfileAsync).RequireAuthorization();
+        group.MapPut("/profile", UpdateProfileAsync).RequireAuthorization();
 
         return app;
     }
@@ -124,6 +126,67 @@ public static class AuthEndpoints
         await db.SaveChangesAsync();
 
         return Results.NoContent();
+    }
+
+    private static async Task<IResult> GetProfileAsync(
+        ClaimsPrincipal principal,
+        UserManager<ApplicationUser> userManager)
+    {
+        var user = await userManager.GetUserAsync(principal);
+        if (user is null)
+        {
+            return Results.Unauthorized();
+        }
+
+        return Results.Ok(await ToProfileResponseAsync(user, userManager));
+    }
+
+    private static async Task<IResult> UpdateProfileAsync(
+        UpdateProfileRequest request,
+        ClaimsPrincipal principal,
+        UserManager<ApplicationUser> userManager)
+    {
+        var user = await userManager.GetUserAsync(principal);
+        if (user is null)
+        {
+            return Results.Unauthorized();
+        }
+
+        var error = ProfileRules.Validate(request.FullName, request.PhoneNumber, out var fullName, out var phoneNumber);
+        if (error is not null)
+        {
+            return Results.BadRequest(new { error });
+        }
+
+        if (!string.Equals(user.PhoneNumber, phoneNumber, StringComparison.Ordinal))
+        {
+            user.PhoneNumberConfirmed = false;
+        }
+
+        user.FullName = fullName;
+        user.PhoneNumber = phoneNumber;
+
+        var updateResult = await userManager.UpdateAsync(user);
+        if (!updateResult.Succeeded)
+        {
+            var errors = updateResult.Errors.ToDictionary(e => e.Code, e => new[] { e.Description });
+            return Results.ValidationProblem(errors);
+        }
+
+        return Results.Ok(await ToProfileResponseAsync(user, userManager));
+    }
+
+    private static async Task<UserProfileResponse> ToProfileResponseAsync(
+        ApplicationUser user,
+        UserManager<ApplicationUser> userManager)
+    {
+        var roles = await userManager.GetRolesAsync(user);
+        return new UserProfileResponse(
+            user.Id,
+            user.Email ?? string.Empty,
+            user.FullName,
+            user.PhoneNumber,
+            roles.ToList());
     }
 
     private static async Task<AuthResponse> IssueTokensAsync(

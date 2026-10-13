@@ -42,6 +42,29 @@ public class PumpScheduleRulesTests
     }
 
     [Fact]
+    public void Detects_overlap_for_an_overnight_interval()
+    {
+        var saturdayWindow = new PumpSchedule
+        {
+            WeekdayMask = 64,
+            StartTime = new TimeOnly(23, 30),
+            EndTime = new TimeOnly(1, 0),
+            IntervalMinutes = 30,
+            DurationSeconds = 60,
+            IsEnabled = true,
+        };
+        var sundayMidnight = new PumpSchedule
+        {
+            WeekdayMask = 1,
+            StartTime = new TimeOnly(0, 0),
+            DurationSeconds = 60,
+            IsEnabled = true,
+        };
+
+        Assert.True(PumpScheduleRules.Overlaps(saturdayWindow, [sundayMidnight]));
+    }
+
+    [Fact]
     public void Finds_only_a_current_valid_occurrence()
     {
         var bangkokSunday = new PumpSchedule
@@ -58,6 +81,26 @@ public class PumpScheduleRulesTests
         Assert.False(PumpScheduleRules.TryGetDueOccurrenceUtc(bangkokSunday, dueNow.AddMinutes(2), TimeSpan.FromSeconds(90), out _));
         bangkokSunday.IsEnabled = false;
         Assert.False(PumpScheduleRules.TryGetDueOccurrenceUtc(bangkokSunday, dueNow, TimeSpan.FromSeconds(90), out _));
+    }
+
+    [Fact]
+    public void Finds_each_interval_occurrence_inside_the_configured_window()
+    {
+        var schedule = new PumpSchedule
+        {
+            IsEnabled = true,
+            WeekdayMask = 1,
+            StartTime = new TimeOnly(6, 0),
+            EndTime = new TimeOnly(7, 0),
+            IntervalMinutes = 30,
+            DurationSeconds = 30,
+            TimeZone = "Asia/Bangkok",
+        };
+        var dueNow = new DateTime(2026, 1, 3, 23, 30, 0, DateTimeKind.Utc);
+
+        var occurrences = PumpScheduleRules.GetDueOccurrencesUtc(schedule, dueNow, TimeSpan.FromSeconds(90));
+
+        Assert.Equal([dueNow], occurrences);
     }
 
     [Fact]

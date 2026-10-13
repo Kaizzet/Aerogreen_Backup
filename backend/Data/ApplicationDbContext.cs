@@ -20,6 +20,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     public DbSet<PumpScheduleOccurrence> PumpScheduleOccurrences => Set<PumpScheduleOccurrence>();
     public DbSet<DeviceAlert> DeviceAlerts => Set<DeviceAlert>();
     public DbSet<AdminAuditLog> AdminAuditLogs => Set<AdminAuditLog>();
+    public DbSet<SupportTicket> SupportTickets => Set<SupportTicket>();
+    public DbSet<SupportTicketMessage> SupportTicketMessages => Set<SupportTicketMessage>();
+    public DbSet<SystemAlertDefaults> SystemAlertDefaults => Set<SystemAlertDefaults>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -118,6 +121,45 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
             entity.Property(log => log.PreviousValue).HasMaxLength(450);
             entity.Property(log => log.NewValue).HasMaxLength(450);
             entity.HasIndex(log => log.CreatedAt);
+        });
+
+        builder.Entity<SupportTicket>(entity =>
+        {
+            entity.Property(ticket => ticket.Subject).HasMaxLength(200);
+            entity.Property(ticket => ticket.Status).HasMaxLength(16);
+            entity.Property(ticket => ticket.Priority).HasMaxLength(16);
+            entity.HasIndex(ticket => new { ticket.Status, ticket.UpdatedAt });
+            entity.HasIndex(ticket => ticket.UserId);
+            entity.HasOne(ticket => ticket.User)
+                .WithMany()
+                .HasForeignKey(ticket => ticket.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<SupportTicketMessage>(entity =>
+        {
+            entity.Property(message => message.Body).HasMaxLength(4000);
+            entity.HasIndex(message => new { message.TicketId, message.CreatedAt });
+            entity.HasOne(message => message.Ticket)
+                .WithMany(ticket => ticket.Messages)
+                .HasForeignKey(message => message.TicketId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(message => message.Author)
+                .WithMany()
+                .HasForeignKey(message => message.AuthorUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<SystemAlertDefaults>(entity =>
+        {
+            entity.HasKey(settings => settings.Id);
+            entity.ToTable(table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_SystemAlertDefaults_LowWaterLevelPercent",
+                    "\"LowWaterLevelPercent\" >= 0 AND \"LowWaterLevelPercent\" <= 100");
+                table.HasCheckConstraint("CK_SystemAlertDefaults_Singleton", "\"Id\" = 1");
+            });
         });
     }
 }

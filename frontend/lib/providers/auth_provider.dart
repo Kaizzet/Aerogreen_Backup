@@ -24,94 +24,6 @@ class AuthProvider with ChangeNotifier {
   String? get errorMessage => _errorMessage;
   bool get isAuthenticated => _user != null;
 
-  // ==================== MOCK DATA - XÓA KHI CÓ BACKEND THẬT ====================
-
-  Future<void> initialize() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    _user = null;
-    _isInitialized = true;
-    if (!_isDisposed) notifyListeners();
-  }
-
-  Future<bool> login(String email, String password) async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
-
-    await Future.delayed(const Duration(seconds: 1));
-
-    // === MOCK: Phân biệt role dựa trên email ===
-    final isAdminEmail = email.toLowerCase() == 'admin@aerogreen.com';
-
-    _user = User(
-      id: isAdminEmail ? 'mock_admin_001' : 'mock_user_001',
-      email: email,
-      fullName: isAdminEmail ? 'Quản trị viên' : 'Nguyễn Văn Test',
-      role: isAdminEmail ? 'admin' : 'user',
-    );
-
-    _isLoading = false;
-    notifyListeners();
-    return true;
-  }
-
-  Future<bool> register(String email, String password, String fullName) async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
-
-    await Future.delayed(const Duration(seconds: 1));
-
-    // === MOCK: User mới đăng ký luôn là role 'user' ===
-    _user = User(
-      id: 'mock_user_${DateTime.now().millisecondsSinceEpoch}',
-      email: email,
-      fullName: fullName,
-      role: 'user',
-    );
-
-    _isLoading = false;
-    notifyListeners();
-    return true;
-  }
-
-  Future<void> logout() async {
-    _isLoading = true;
-    notifyListeners();
-
-    await Future.delayed(const Duration(milliseconds: 300));
-
-    _user = null;
-    _isLoading = false;
-    notifyListeners();
-  }
-
-  void _handleSessionExpired() {
-    if (_user == null) return;
-    _user = null;
-    notifyListeners();
-  }
-
-  @override
-  void dispose() {
-    _isDisposed = true;
-    if (identical(ApiService.onSessionExpired, _sessionExpiredHandler)) {
-      ApiService.onSessionExpired = null;
-    }
-    super.dispose();
-  }
-
-  void clearError() {
-    _errorMessage = null;
-    notifyListeners();
-  }
-
-// ==================== KẾT THÚC MOCK DATA ====================
-
-
-// ==================== CODE CŨ - GIỮ NGUYÊN 100% ====================
-/*
-
   Future<void> initialize() async {
     try {
       _user = await _apiService.restoreSession();
@@ -140,9 +52,9 @@ class AuthProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
       return true;
-    } catch (e) {
+    } catch (error) {
       _isLoading = false;
-      _errorMessage = _formatLoginError(e);
+      _errorMessage = _formatLoginError(error);
       notifyListeners();
       return false;
     }
@@ -156,9 +68,9 @@ class AuthProvider with ChangeNotifier {
     try {
       await _apiService.register(email, password, fullName);
       return await login(email, password);
-    } catch (e) {
+    } catch (error) {
       _isLoading = false;
-      _errorMessage = _formatLoginError(e);
+      _errorMessage = _formatLoginError(error);
       notifyListeners();
       return false;
     }
@@ -201,13 +113,51 @@ class AuthProvider with ChangeNotifier {
 
     try {
       await _apiService.logout();
-    } catch (e) {
-      // Continue with logout even if API call fails
-      debugPrint('Logout error: $e');
+    } catch (error) {
+      debugPrint('Logout error: $error');
     } finally {
       _user = null;
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  /// Tải hồ sơ đầy đủ (số điện thoại, vai trò) từ API. Trả về false khi không tải được.
+  Future<bool> loadProfile() async {
+    try {
+      final data = await _apiService.getProfile();
+      _user = User.fromProfileJson(data);
+      if (!_isDisposed) notifyListeners();
+      return true;
+    } catch (error) {
+      debugPrint('Profile load error: $error');
+      return false;
+    }
+  }
+
+  /// Cập nhật họ tên và số điện thoại. Trả về false và đặt errorMessage khi thất bại.
+  Future<bool> updateProfile({
+    required String fullName,
+    String? phoneNumber,
+  }) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final data = await _apiService.updateProfile(
+        fullName: fullName,
+        phoneNumber: phoneNumber,
+      );
+      _user = User.fromProfileJson(data);
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (error) {
+      _isLoading = false;
+      _errorMessage = error.toString().replaceFirst('Exception: ', '');
+      notifyListeners();
+      return false;
     }
   }
 
@@ -224,7 +174,4 @@ class AuthProvider with ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
   }
-
-  */
-// ==================== KẾT THÚC CODE CŨ ====================
 }

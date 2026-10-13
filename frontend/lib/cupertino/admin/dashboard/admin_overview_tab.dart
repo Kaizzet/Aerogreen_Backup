@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import '../widgets/admin_logout_button.dart';
 
 import '../../../providers/auth_provider.dart';
-import '../../../services/mock_admin_service.dart';
+import '../../../services/api_service.dart';
 import '../../theme/cupertino_theme.dart';
-import 'admin_system_health_card.dart';
 import 'admin_quick_stats.dart';
 
 class AdminOverviewTab extends StatefulWidget {
@@ -15,12 +15,11 @@ class AdminOverviewTab extends StatefulWidget {
 }
 
 class _AdminOverviewTabState extends State<AdminOverviewTab> {
-  final _mockService = MockAdminService();
+  final _apiService = ApiService();
   bool _isLoading = true;
+  String? _error;
 
-  Map<String, dynamic>? _systemHealth;
-  List<Map<String, dynamic>> _alerts = [];
-  List<Map<String, dynamic>> _tickets = [];
+  Map<String, dynamic>? _stats;
 
   @override
   void initState() {
@@ -30,22 +29,29 @@ class _AdminOverviewTabState extends State<AdminOverviewTab> {
 
   Future<void> _loadData() async {
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 400)); // Giả lập loading
-    if (!mounted) return;
-    setState(() {
-      _systemHealth = _mockService.getMockSystemHealth();
-      _alerts = _mockService
-          .getMockAlerts()
-          .where((a) => a['severity'] == 'critical' && a['isResolved'] != true)
-          .take(5)
-          .toList();
-      _tickets = _mockService
-          .getMockTickets()
-          .where((t) => t['status'] != 'closed')
-          .take(3)
-          .toList();
-      _isLoading = false;
-    });
+    try {
+      final overview = await _apiService.getAdminOverview();
+      if (!mounted) return;
+      setState(() {
+        _stats = {
+          'totalUsers': overview['users'],
+          'totalDevices': overview['devices'],
+          'onlineDevices': overview['onlineDevices'],
+          'totalAlerts': overview['unresolvedAlerts'],
+          'unresolvedAlerts': overview['unresolvedAlerts'],
+          'openTickets': overview['openTickets'],
+        };
+        _error = null;
+        _isLoading = false;
+      });
+    } catch (error) {
+      if (mounted) {
+        setState(() {
+          _error = '$error';
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -55,17 +61,26 @@ class _AdminOverviewTabState extends State<AdminOverviewTab> {
         child: CupertinoActivityIndicator(radius: 14),
       );
     }
+    if (_error != null) {
+      return Center(child: CupertinoButton(onPressed: _loadData, child: Text(_error!)));
+    }
 
     return CustomScrollView(
       physics: const BouncingScrollPhysics(),
       slivers: [
         CupertinoSliverNavigationBar(
           largeTitle: const Text('Tổng quan'),
-          trailing: CupertinoButton(
-            padding: EdgeInsets.zero,
-            minSize: 44,
-            onPressed: _loadData,
-            child: const Icon(CupertinoIcons.arrow_2_circlepath),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(44, 44),
+                onPressed: _loadData,
+                child: const Icon(CupertinoIcons.arrow_2_circlepath),
+              ),
+              const AdminLogoutButton(),
+            ],
           ),
         ),
         CupertinoSliverRefreshControl(onRefresh: _loadData),
@@ -76,36 +91,7 @@ class _AdminOverviewTabState extends State<AdminOverviewTab> {
               _buildGreeting(context),
               const SizedBox(height: 20),
 
-              // 1. System Health Card
-              if (_systemHealth != null)
-                AdminSystemHealthCard(systemHealth: _systemHealth!),
-              const SizedBox(height: 20),
-
-              // 2. Quick Stats
-              if (_systemHealth != null)
-                AdminQuickStats(stats: _systemHealth!),
-              const SizedBox(height: 26),
-
-              // 3. Critical Alerts
-              if (_alerts.isNotEmpty) ...[
-                _sectionHeader(context, 'Cần xử lý ngay', '${_alerts.length} vấn đề'),
-                const SizedBox(height: 12),
-                ..._alerts.map((alert) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: _AlertCard(alert: alert),
-                )),
-                const SizedBox(height: 26),
-              ],
-
-              // 4. Open Tickets
-              if (_tickets.isNotEmpty) ...[
-                _sectionHeader(context, 'Tickets đang mở', '${_tickets.length} ticket'),
-                const SizedBox(height: 12),
-                ..._tickets.map((ticket) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: _TicketCard(ticket: ticket),
-                )),
-              ],
+              if (_stats != null) AdminQuickStats(stats: _stats!),
             ]),
           ),
         ),
@@ -162,193 +148,6 @@ class _AdminOverviewTabState extends State<AdminOverviewTab> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _sectionHeader(BuildContext context, String title, String trailing) {
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            title,
-            style: TextStyle(
-              color: CupertinoColors.label.resolveFrom(context),
-              fontSize: 19,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-        Text(
-          trailing,
-          style: TextStyle(
-            color: CupertinoColors.secondaryLabel.resolveFrom(context),
-            fontSize: 12,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// ==================== ALERT CARD ====================
-class _AlertCard extends StatelessWidget {
-  final Map<String, dynamic> alert;
-
-  const _AlertCard({required this.alert});
-
-  @override
-  Widget build(BuildContext context) {
-    final severity = alert['severity'] as String? ?? 'info';
-    final color = _severityColor(severity);
-
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: CupertinoColors.secondarySystemBackground.resolveFrom(context),
-        borderRadius: BorderRadius.circular(14),
-        border: Border(
-          left: BorderSide(color: color, width: 4),
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(
-              _severityIcon(severity),
-              color: color,
-              size: 18,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  alert['deviceName'] ?? 'Thiết bị',
-                  style: TextStyle(
-                    color: CupertinoColors.label.resolveFrom(context),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  alert['message'] ?? '',
-                  style: TextStyle(
-                    color: CupertinoColors.secondaryLabel.resolveFrom(context),
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Icon(
-            CupertinoIcons.chevron_right,
-            size: 14,
-            color: CupertinoColors.tertiaryLabel,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Color _severityColor(String severity) {
-    switch (severity) {
-      case 'critical':
-        return CupertinoColors.systemRed;
-      case 'warning':
-        return CupertinoColors.systemOrange;
-      default:
-        return CupertinoColors.systemBlue;
-    }
-  }
-
-  IconData _severityIcon(String severity) {
-    switch (severity) {
-      case 'critical':
-        return CupertinoIcons.exclamationmark_octagon_fill;
-      case 'warning':
-        return CupertinoIcons.exclamationmark_triangle_fill;
-      default:
-        return CupertinoIcons.info_circle_fill;
-    }
-  }
-}
-
-// ==================== TICKET CARD ====================
-class _TicketCard extends StatelessWidget {
-  final Map<String, dynamic> ticket;
-
-  const _TicketCard({required this.ticket});
-
-  @override
-  Widget build(BuildContext context) {
-    final status = ticket['status'] as String? ?? 'open';
-    final color = status == 'open'
-        ? CupertinoColors.systemRed
-        : CupertinoColors.systemOrange;
-
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: CupertinoColors.secondarySystemBackground.resolveFrom(context),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(
-              CupertinoIcons.chat_bubble_2_fill,
-              color: color,
-              size: 18,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  ticket['subject'] ?? '',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: CupertinoColors.label.resolveFrom(context),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '${ticket['userName']} • ${status == 'open' ? 'Mới' : 'Đang xử lý'}',
-                  style: TextStyle(
-                    color: CupertinoColors.secondaryLabel.resolveFrom(context),
-                    fontSize: 11,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Icon(
-            CupertinoIcons.chevron_right,
-            size: 14,
-            color: CupertinoColors.tertiaryLabel,
-          ),
-        ],
-      ),
     );
   }
 }

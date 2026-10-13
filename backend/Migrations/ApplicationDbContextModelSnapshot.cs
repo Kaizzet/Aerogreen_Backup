@@ -289,6 +289,12 @@ namespace IOTAgriBackend.Migrations
                     b.Property<int>("DurationSeconds")
                         .HasColumnType("integer");
 
+                    b.Property<TimeOnly?>("EndTime")
+                        .HasColumnType("time without time zone");
+
+                    b.Property<int?>("IntervalMinutes")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("boolean");
 
@@ -404,6 +410,9 @@ namespace IOTAgriBackend.Migrations
                     b.Property<DateTime>("RecordedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<double?>("SolutionTemperature")
+                        .HasColumnType("double precision");
+
                     b.Property<double?>("Tds")
                         .HasColumnType("double precision");
 
@@ -418,6 +427,103 @@ namespace IOTAgriBackend.Migrations
                     b.HasIndex("DeviceId", "RecordedAt");
 
                     b.ToTable("SensorReadings");
+                });
+
+            modelBuilder.Entity("IOTAgriBackend.Models.SupportTicket", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("Status", "UpdatedAt");
+
+                    b.ToTable("SupportTickets");
+                });
+
+            modelBuilder.Entity("IOTAgriBackend.Models.SupportTicketMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AuthorUserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("TicketId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorUserId");
+
+                    b.HasIndex("TicketId", "CreatedAt");
+
+                    b.ToTable("SupportTicketMessages");
+                });
+
+            modelBuilder.Entity("IOTAgriBackend.Models.SystemAlertDefaults", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("HighTemperatureC")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("LowWaterLevelPercent")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SystemAlertDefaults", t =>
+                        {
+                            t.HasCheckConstraint("CK_SystemAlertDefaults_LowWaterLevelPercent", "\"LowWaterLevelPercent\" >= 0 AND \"LowWaterLevelPercent\" <= 100");
+
+                            t.HasCheckConstraint("CK_SystemAlertDefaults_Singleton", "\"Id\" = 1");
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -628,6 +734,36 @@ namespace IOTAgriBackend.Migrations
                     b.Navigation("Device");
                 });
 
+            modelBuilder.Entity("IOTAgriBackend.Models.SupportTicket", b =>
+                {
+                    b.HasOne("IOTAgriBackend.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("IOTAgriBackend.Models.SupportTicketMessage", b =>
+                {
+                    b.HasOne("IOTAgriBackend.Models.ApplicationUser", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("IOTAgriBackend.Models.SupportTicket", "Ticket")
+                        .WithMany("Messages")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Ticket");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -698,6 +834,11 @@ namespace IOTAgriBackend.Migrations
             modelBuilder.Entity("IOTAgriBackend.Models.PumpSchedule", b =>
                 {
                     b.Navigation("Occurrences");
+                });
+
+            modelBuilder.Entity("IOTAgriBackend.Models.SupportTicket", b =>
+                {
+                    b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618
         }

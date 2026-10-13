@@ -54,8 +54,8 @@ public class PumpScheduleDispatchService : BackgroundService
             var dueOccurrences = new List<DueOccurrence>();
             foreach (var schedule in schedules)
             {
-                if (PumpScheduleRules.TryGetDueOccurrenceUtc(schedule, now, dueWindow, out var occurrence))
-                    dueOccurrences.Add(new DueOccurrence(schedule.Id, occurrence));
+                dueOccurrences.AddRange(PumpScheduleRules.GetDueOccurrencesUtc(schedule, now, dueWindow)
+                    .Select(occurrence => new DueOccurrence(schedule.Id, occurrence)));
             }
             var pendingIds = await db.PumpScheduleOccurrences
                 .Where(occurrence => occurrence.DispatchedAt == null && occurrence.Schedule!.IsEnabled)

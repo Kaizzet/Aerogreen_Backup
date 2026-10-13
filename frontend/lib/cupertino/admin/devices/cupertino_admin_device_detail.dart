@@ -11,7 +11,7 @@
 
 import 'package:flutter/cupertino.dart';
 
-import '../../../services/mock_admin_service.dart';
+import '../../../services/api_service.dart';
 import '../../theme/cupertino_theme.dart';
 
 class CupertinoAdminDeviceDetailScreen extends StatefulWidget {
@@ -29,7 +29,7 @@ class CupertinoAdminDeviceDetailScreen extends StatefulWidget {
 
 class _CupertinoAdminDeviceDetailScreenState
     extends State<CupertinoAdminDeviceDetailScreen> {
-  final _mockService = MockAdminService();
+  final _apiService = ApiService();
 
   late Map<String, dynamic> _device;
   List<Map<String, dynamic>> _pumpHistory = [];
@@ -47,23 +47,31 @@ class _CupertinoAdminDeviceDetailScreenState
 
   Future<void> _loadData() async {
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 300));
-
-    // Mock: lấy 5 lần bơm gần nhất từ tickets (giả làm pump history)
-    _pumpHistory = List.generate(5, (i) {
-      return {
-        'id': 'pump_${i + 1}',
-        'time': DateTime.now()
-            .subtract(Duration(hours: i * 3 + 1))
-            .toIso8601String(),
-        'duration': 30 + (i * 10), // giây
-        'isOn': true,
-        'trigger': i % 2 == 0 ? 'Tự động' : 'Thủ công',
+    try {
+      final response = await _apiService.getAdminDevice(_device['id'] as String);
+      final device = Map<String, dynamic>.from(response['device'] as Map);
+      final reading = response['latestReading'] as Map<String, dynamic>?;
+      _device = {
+        ..._device,
+        ...device,
+        'temperature': reading?['temperature'],
+        'humidity': reading?['humidity'],
+        'waterLevel': reading?['waterLevel'],
       };
-    });
-
-    if (!mounted) return;
-    setState(() => _isLoading = false);
+      _isPumping = _device['isPumpOn'] == true;
+      _pumpHistory = (response['pumpCommands'] as List<dynamic>? ?? []).map((item) {
+        final command = item as Map<String, dynamic>;
+        return <String, dynamic>{
+          'id': command['id'],
+          'time': command['issuedAt'],
+          'duration': command['durationSeconds'] ?? 0,
+          'isOn': command['isOn'],
+          'trigger': command['source'] == 1 ? 'Tự động' : 'Thủ công',
+        };
+      }).toList();
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -220,7 +228,7 @@ class _CupertinoAdminDeviceDetailScreenState
   Widget _buildSensorSection(BuildContext context) {
     final temperature = _device['temperature'] as num?;
     final humidity = _device['humidity'] as num?;
-    final soilMoisture = _device['soilMoisture'] as num?;
+    final waterLevel = _device['waterLevel'] as num?;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,8 +260,8 @@ class _CupertinoAdminDeviceDetailScreenState
             Expanded(
               child: _SensorCard(
                 icon: CupertinoIcons.leaf_arrow_circlepath,
-                label: 'Đất',
-                value: soilMoisture?.toStringAsFixed(0) ?? '--',
+                label: 'Nước',
+                value: waterLevel?.toStringAsFixed(0) ?? '--',
                 unit: '%',
                 color: AerogreenCupertinoTheme.aerogreenPrimary,
               ),
@@ -346,7 +354,7 @@ class _CupertinoAdminDeviceDetailScreenState
               CupertinoButton(
                 padding: EdgeInsets.zero,
                 minimumSize: const Size(double.infinity, 48),
-                onPressed: _togglePump,
+                onPressed: null,
                 child: Container(
                   height: 48,
                   decoration: BoxDecoration(
@@ -367,7 +375,7 @@ class _CupertinoAdminDeviceDetailScreenState
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        _isPumping ? 'Tắt bơm' : 'Bật bơm (60s)',
+                        'Trạng thái chỉ đọc',
                         style: const TextStyle(
                           color: CupertinoColors.white,
                           fontSize: 15,
@@ -560,18 +568,20 @@ class _CupertinoAdminDeviceDetailScreenState
         _buildActionButton(
           context,
           icon: CupertinoIcons.person_crop_circle_badge_checkmark,
-          label: 'Gán cho user',
+          label: _device['ownerId'] == null ? 'Gán cho user' : 'Đổi owner',
           color: CupertinoColors.systemBlue,
           onPressed: _assignDevice,
         ),
-        const SizedBox(height: 10),
-        _buildActionButton(
-          context,
-          icon: CupertinoIcons.trash_fill,
-          label: 'Xóa thiết bị',
-          color: CupertinoColors.systemRed,
-          onPressed: _confirmDelete,
-        ),
+        if (_device['ownerId'] != null) ...[
+          const SizedBox(height: 10),
+          _buildActionButton(
+            context,
+            icon: CupertinoIcons.person_crop_circle_badge_xmark,
+            label: 'Hủy gán owner',
+            color: CupertinoColors.systemRed,
+            onPressed: _unassignDevice,
+          ),
+        ],
       ],
     );
   }
@@ -704,14 +714,15 @@ class _CupertinoAdminDeviceDetailScreenState
             },
             child: const Text('Gán cho user'),
           ),
-          CupertinoActionSheetAction(
-            isDestructiveAction: true,
-            onPressed: () {
-              Navigator.of(actionContext).pop();
-              _confirmDelete();
-            },
-            child: const Text('Xóa thiết bị'),
-          ),
+          if (_device['ownerId'] != null)
+            CupertinoActionSheetAction(
+              isDestructiveAction: true,
+              onPressed: () async {
+                Navigator.of(actionContext).pop();
+                await _unassignDevice();
+              },
+              child: const Text('Hủy gán owner'),
+            ),
         ],
         cancelButton: CupertinoActionSheetAction(
           onPressed: () => Navigator.of(actionContext).pop(),
@@ -721,32 +732,28 @@ class _CupertinoAdminDeviceDetailScreenState
     );
   }
 
-  // Bật/tắt bơm (mock)
-  void _togglePump() {
-    setState(() => _isPumping = !_isPumping);
-    _showToast(
-      _isPumping ? 'Đã bật bơm (60 giây)' : 'Đã tắt bơm',
-    );
-  }
-
-  // Gán device cho user
-  void _assignDevice() {
-    final users = _mockService.getMockUsers();
+  Future<void> _assignDevice() async {
+    final response = await _apiService.getAdminUsers();
+    if (!mounted) return;
+    final users = response['items'] as List<dynamic>? ?? [];
     showCupertinoModalPopup<void>(
       context: context,
       builder: (actionContext) => CupertinoActionSheet(
         title: const Text('Chọn user để gán'),
-        actions: users.take(5).map((user) {
+        actions: users.map((item) {
+          final user = item as Map<String, dynamic>;
           return CupertinoActionSheetAction(
-            onPressed: () {
+            onPressed: () async {
               Navigator.of(actionContext).pop();
-              setState(() {
-                _device['ownerId'] = user.id;
-                _device['ownerEmail'] = user.email;
-              });
-              _showToast('Đã gán cho ${user.email}');
+              final updated = await _apiService.updateAdminDeviceOwner(
+                _device['id'] as String,
+                user['id'] as String,
+              );
+              if (!mounted) return;
+              setState(() => _device = {..._device, ...updated});
+              _showToast('Đã gán cho ${user['email']}');
             },
-            child: Text(user.email),
+            child: Text(user['email'] as String? ?? ''),
           );
         }).toList(),
         cancelButton: CupertinoActionSheetAction(
@@ -757,35 +764,14 @@ class _CupertinoAdminDeviceDetailScreenState
     );
   }
 
-  // Xác nhận xóa
-  void _confirmDelete() {
-    showCupertinoDialog<void>(
-      context: context,
-      builder: (dialogContext) => CupertinoAlertDialog(
-        title: const Text('Xóa thiết bị'),
-        content: Padding(
-          padding: const EdgeInsets.only(top: 8),
-          child: Text(
-            'Bạn có chắc muốn xóa "${_device['name']}"?\n'
-                'Hành động này không thể hoàn tác.',
-          ),
-        ),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Hủy'),
-          ),
-          CupertinoDialogAction(
-            isDestructiveAction: true,
-            onPressed: () {
-              Navigator.of(dialogContext).pop();
-              Navigator.of(context).pop();
-            },
-            child: const Text('Xóa'),
-          ),
-        ],
-      ),
+  Future<void> _unassignDevice() async {
+    final updated = await _apiService.updateAdminDeviceOwner(
+      _device['id'] as String,
+      null,
     );
+    if (!mounted) return;
+    setState(() => _device = {..._device, ...updated});
+    _showToast('Đã hủy gán owner');
   }
 
   void _showToast(String message) {

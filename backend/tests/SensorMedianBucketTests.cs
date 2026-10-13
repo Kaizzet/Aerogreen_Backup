@@ -13,13 +13,14 @@ public class SensorMedianBucketTests
         var start = new DateTime(2026, 9, 17, 0, 0, 0, DateTimeKind.Utc);
         var source = new Dictionary<DateTime, SensorMedianBucket>
         {
-            [start.AddHours(2)] = new(start.AddHours(2), 2, 2, 2, 2, 2, 200, 3),
+            [start.AddHours(2)] = new(start.AddHours(2), 2, 3, 2, 2, 2, 2, 200, 3),
         };
 
         var buckets = SensorMedianBuckets.Complete(start, 24, TimeSpan.FromHours(1), source);
 
         Assert.Equal(24, buckets.Count);
         Assert.Equal(2, buckets[2].MedianTemperature);
+        Assert.Equal(3, buckets[2].MedianSolutionTemperature);
         Assert.Equal(200, buckets[2].MedianLux);
         Assert.Equal(3, buckets[2].SampleCount);
         Assert.Null(buckets[0].MedianTemperature);

@@ -2,6 +2,7 @@ class SensorReading {
   final String id;
   final String deviceId;
   final double? temperature;
+  final double? solutionTemperature;
   final double? humidity;
   final double? ph;
   final double? tds;
@@ -13,6 +14,7 @@ class SensorReading {
     required this.id,
     required this.deviceId,
     this.temperature,
+    this.solutionTemperature,
     this.humidity,
     this.ph,
     this.tds,
@@ -26,6 +28,7 @@ class SensorReading {
       id: json['id'] ?? '',
       deviceId: json['deviceId'] ?? '',
       temperature: json['temperature']?.toDouble(),
+      solutionTemperature: json['solutionTemperature']?.toDouble(),
       humidity: json['humidity']?.toDouble(),
       ph: json['ph']?.toDouble(),
       tds: json['tds']?.toDouble(),
@@ -40,6 +43,7 @@ class SensorReading {
       'id': id,
       'deviceId': deviceId,
       'temperature': temperature,
+      'solutionTemperature': solutionTemperature,
       'humidity': humidity,
       'ph': ph,
       'tds': tds,

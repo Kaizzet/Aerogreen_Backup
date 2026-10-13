@@ -19,6 +19,7 @@ class _CupertinoLoginScreenState extends State<CupertinoLoginScreen> {
   bool _obscurePassword = true;
   String? _emailError;
   String? _passwordError;
+  String? _loginError;
 
   @override
   void dispose() {
@@ -41,34 +42,16 @@ class _CupertinoLoginScreenState extends State<CupertinoLoginScreen> {
           : password.length < 8
           ? 'Mật khẩu phải có ít nhất 8 ký tự.'
           : null;
+      _loginError = null;
     });
     if (_emailError != null || _passwordError != null) return;
 
     final success = await context.read<AuthProvider>().login(email, password);
     if (!success && mounted) {
-      _showMessage(
-        context.read<AuthProvider>().errorMessage ?? 'Đăng nhập thất bại.',
-      );
+      setState(() {
+        _loginError = context.read<AuthProvider>().errorMessage ?? 'Email hoặc mật khẩu không đúng.';
+      });
     }
-  }
-
-  void _showMessage(String message) {
-    showCupertinoDialog<void>(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('Không thể đăng nhập'),
-        content: Padding(
-          padding: const EdgeInsets.only(top: 8),
-          child: Text(message),
-        ),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Đã hiểu'),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -129,8 +112,11 @@ class _CupertinoLoginScreenState extends State<CupertinoLoginScreen> {
                           ),
                           padding: const EdgeInsets.all(16),
                           onChanged: (_) {
-                            if (_emailError != null) {
-                              setState(() => _emailError = null);
+                            if (_emailError != null || _loginError != null) {
+                              setState(() {
+                                _emailError = null;
+                                _loginError = null;
+                              });
                             }
                           },
                           decoration: _fieldDecoration(
@@ -156,7 +142,7 @@ class _CupertinoLoginScreenState extends State<CupertinoLoginScreen> {
                           ),
                           suffix: CupertinoButton(
                             padding: const EdgeInsets.all(12),
-                            minSize: 44,
+                            minimumSize: const Size(44, 44),
                             onPressed: () => setState(
                               () => _obscurePassword = !_obscurePassword,
                             ),
@@ -169,8 +155,11 @@ class _CupertinoLoginScreenState extends State<CupertinoLoginScreen> {
                           ),
                           padding: const EdgeInsets.fromLTRB(14, 16, 4, 16),
                           onChanged: (_) {
-                            if (_passwordError != null) {
-                              setState(() => _passwordError = null);
+                            if (_passwordError != null || _loginError != null) {
+                              setState(() {
+                                _passwordError = null;
+                                _loginError = null;
+                              });
                             }
                           },
                           decoration: _fieldDecoration(
@@ -180,11 +169,34 @@ class _CupertinoLoginScreenState extends State<CupertinoLoginScreen> {
                         ),
                       ),
                       if (_passwordError != null) _FieldError(_passwordError!),
+                      if (_loginError != null)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8, top: 8),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                CupertinoIcons.xmark_circle_fill,
+                                size: 16,
+                                color: CupertinoColors.systemRed,
+                              ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  _loginError!,
+                                  style: const TextStyle(
+                                    color: CupertinoColors.systemRed,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       const SizedBox(height: 28),
                       Consumer<AuthProvider>(
                         builder: (context, authProvider, _) {
                           return CupertinoButton.filled(
-                            minSize: 52,
+                            minimumSize: const Size(52, 52),
                             borderRadius: BorderRadius.circular(16),
                             onPressed: authProvider.isLoading ? null : _submit,
                             child: authProvider.isLoading
@@ -202,7 +214,7 @@ class _CupertinoLoginScreenState extends State<CupertinoLoginScreen> {
                       ),
                       const SizedBox(height: 14),
                       CupertinoButton(
-                        minSize: 44,
+                        minimumSize: const Size(44, 44),
                         onPressed: () {
                           Navigator.of(context).push(
                             CupertinoPageRoute<void>(
@@ -246,7 +258,7 @@ class _CupertinoLoginScreenState extends State<CupertinoLoginScreen> {
                       ),
                       const SizedBox(height: 8),
                       CupertinoButton(
-                        minSize: 44,
+                        minimumSize: const Size(44, 44),
                         onPressed: () {
                           Navigator.of(context).push(
                             CupertinoPageRoute<void>(

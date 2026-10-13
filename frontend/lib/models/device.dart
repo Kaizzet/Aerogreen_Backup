@@ -5,6 +5,7 @@ class Device {
   final String? lastSeenAt;
   final String createdAt;
   final String? deviceKey;
+  final String? location;
 
   Device({
     required this.id,
@@ -13,6 +14,7 @@ class Device {
     this.lastSeenAt,
     required this.createdAt,
     this.deviceKey,
+    this.location,
   });
 
   factory Device.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class Device {
       lastSeenAt: json['lastSeenAt'],
       createdAt: json['createdAt'] ?? '',
       deviceKey: json['deviceKey'],
+      location: json['location'],
     );
   }
 
@@ -34,6 +37,7 @@ class Device {
       'lastSeenAt': lastSeenAt,
       'createdAt': createdAt,
       'deviceKey': deviceKey,
+      'location': location,
     };
   }
 }

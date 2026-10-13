@@ -141,20 +141,30 @@ class _PumpSchedulesScreenState extends State<PumpSchedulesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Lịch trình bơm - ${widget.device.name}'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadSchedules,
+    return Localizations(
+      locale: const Locale('en'),
+      delegates: const [
+        DefaultMaterialLocalizations.delegate,
+        DefaultWidgetsLocalizations.delegate,
+      ],
+      child: Theme(
+        data: ThemeData(useMaterial3: true),
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text('Lịch trình bơm - ${widget.device.name}'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: _loadSchedules,
+              ),
+            ],
           ),
-        ],
-      ),
-      body: _buildBody(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _addSchedule,
-        child: const Icon(Icons.add),
+          body: _buildBody(),
+          floatingActionButton: FloatingActionButton(
+            onPressed: _addSchedule,
+            child: const Icon(Icons.add),
+          ),
+        ),
       ),
     );
   }
