@@ -7,11 +7,28 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    ports:
+      # Expose PostgreSQL only to this computer so pgAdmin can connect safely.
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 10
+
+  pgadmin:
+    image: dpage/pgadmin4:9.18
+    ports:
+      # Keep the admin UI private to this PC.
+      - "127.0.0.1:${PGADMIN_PORT:-5050}:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:?set PGADMIN_DEFAULT_EMAIL in .env}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:?set PGADMIN_DEFAULT_PASSWORD in .env}
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   mosquitto:
     image: eclipse-mosquitto:2
@@ -37,6 +54,9 @@ services:
       Jwt__Issuer: IOTAgriBackend
       Jwt__Audience: IOTAgriBackendClients
       Jwt__Key: ${JWT_KEY}
+      Admin__Email: ${ADMIN_EMAIL:-}
+      Admin__Password: ${ADMIN_PASSWORD:-}
+      Admin__FullName: ${ADMIN_FULL_NAME:-}
       Mqtt__Host: mosquitto
       Mqtt__Port: 1883
       Mqtt__UseTls: "false"
@@ -53,5 +73,6 @@ services:
 
 volumes:
   postgres-data:
+  pgadmin-data:
   mosquitto-data:
   mosquitto-log:

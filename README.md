@@ -53,7 +53,28 @@ docker compose up -d --build
 Invoke-WebRequest http://localhost:8080/health
 ```
 
+The API seeds the configured administrator on startup. Set a unique `ADMIN_EMAIL`,
+`ADMIN_PASSWORD`, and `ADMIN_FULL_NAME` in `.env` before starting the stack; replace
+the sample password, especially outside local development. The account is created
+only if that email does not already exist, and the Admin role is ensured on each startup.
+
 Swagger UI is available at `http://localhost:8080/swagger`.
+
+### Connecting with pgAdmin
+
+The PostgreSQL service is published only to this computer at `127.0.0.1`.
+The Compose stack also includes a browser-based pgAdmin at `http://127.0.0.1:5050`.
+Sign in with `PGADMIN_DEFAULT_EMAIL` and `PGADMIN_DEFAULT_PASSWORD` from `.env`, then
+register a server using these connection fields:
+
+- **Host name/address:** `postgres` (the Docker service name)
+- **Port:** `5432`
+- **Maintenance database:** value of `POSTGRES_DB` in `.env`
+- **Username:** value of `POSTGRES_USER` in `.env`
+- **Password:** value of `POSTGRES_PASSWORD` in `.env`
+
+The standalone Windows pgAdmin app can use `127.0.0.1` and `POSTGRES_PORT` instead,
+but the bundled pgAdmin avoids the Windows desktop runtime issue.
 
 ## Continuous Integration
 
