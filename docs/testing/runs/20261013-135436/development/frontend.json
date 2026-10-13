@@ -1,0 +1,17 @@
+{
+    "workingDirectory":  "[workspace]\\frontend",
+    "started":  "2026-10-13T14:09:34.5177766+07:00",
+    "check":  "frontend",
+    "command":  [
+                    "[workspace]\\.runtime\\flutter\\bin\\flutter.bat",
+                    "test",
+                    "--no-pub",
+                    "--reporter",
+                    "expanded",
+                    "--file-reporter",
+                    "json:[workspace]\\docs\\testing\\runs\\20261013-135436\\development\\frontend-events.jsonl",
+                    "test/default_auth_test.dart"
+                ],
+    "phase":  "development",
+    "exitCode":  0
+}

@@ -1,0 +1,17 @@
+{
+    "workingDirectory":  "[workspace]\\frontend",
+    "started":  "2026-10-13T14:26:24.8946203+07:00",
+    "check":  "frontend",
+    "command":  [
+                    "[workspace]\\.runtime\\flutter\\bin\\flutter.bat",
+                    "test",
+                    "--no-pub",
+                    "--reporter",
+                    "expanded",
+                    "--file-reporter",
+                    "json:[workspace]\\docs\\testing\\runs\\20261013-135436\\final\\frontend-events.jsonl",
+                    "--coverage"
+                ],
+    "phase":  "final",
+    "exitCode":  0
+}

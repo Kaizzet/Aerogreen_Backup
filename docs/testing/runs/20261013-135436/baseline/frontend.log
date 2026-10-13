@@ -1,0 +1,271 @@
+Started: 2026-10-13T13:55:36.2120658+07:00
+Working directory: [workspace]\frontend
+Command: [workspace]\.runtime\flutter\bin\flutter.bat test --no-pub --reporter expanded
+Exit code: 1
+00:00 +0: loading [workspace]/frontend/test/add_device_test.dart
+00:00 +0: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Success Path Step 1: Prepare advances to Step 2
+00:00 +1: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Success Path Step 2: QR scan finds device and advances
+00:00 +2: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Success Path Step 2: BLE scan finds nearby devices
+00:00 +3: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Success Path Step 2: Manual claim code option available
+00:00 +4: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Success Path Step 3: Wi-Fi selection and password entry
+00:00 +5: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Success Path Step 3: 5GHz network flag blocks connection
+00:00 +6: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Success Path Step 4: Connecting completes all 3 stages
+00:00 +7: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Success Path Step 5: Name and place save successfully
+00:00 +8: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Success Path Step 6: Done state shows device online
+00:00 +9: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Success Path Complete flow creates device successfully
+00:00 +10: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Failure Scenarios Device not found: shows error with retry
+00:00 +11: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Failure Scenarios Wrong Wi-Fi password=[REDACTED] to Step 3 with focus
+00:00 +12: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Failure Scenarios 5GHz network: blocks and shows warning
+00:00 +13: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Failure Scenarios Already claimed: links to support
+00:00 +14: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Failure Scenarios Timeout: shows reset instructions
+00:00 +15: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Failure Scenarios Connection timeout after 60 seconds
+00:00 +16: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Web Platform Web: BLE option hidden
+00:00 +17: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Web Platform Web: Claim code only with setup message
+00:00 +18: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Web Platform Web: QR scan disabled with message
+00:00 +19: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Progress Indicator Progress indicator shows current step
+00:00 +20: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Progress Indicator Progress indicator marks completed steps
+00:00 +21: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Progress Indicator Progress indicator updates on step change
+00:00 +22: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Navigation Back button returns to previous step
+00:00 +23: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Navigation Cancel on step 1 closes screen
+00:00 +24: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Navigation Cancel on later steps shows confirmation
+00:00 +25: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Navigation Unsaved changes warning on cancel
+00:00 +26: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Name and Place Suggested name: Tháp 1
+00:00 +27: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Name and Place Location field is optional
+00:00 +28: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Name and Place Crop type selection saves with device
+00:00 +29: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Name and Place Name validation: required field
+00:00 +30: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Done State Done shows device name and online status
+00:00 +31: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Done State Done has Setup Schedule button
+00:00 +32: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Done State Done has Open Device button
+00:00 +33: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Done State Setup Schedule navigates to PumpSchedules
+00:00 +34: [workspace]/frontend/test/add_device_test.dart: Add Device Flow - Done State Open Device navigates to DeviceDetail
+00:01 +35: [workspace]/frontend/test/alert_center_provider_test.dart: tracks unread alerts and filters critical alerts
+00:01 +36: [workspace]/frontend/test/alert_center_provider_test.dart: debounces repeated alert delivery within the interval
+00:01 +37: [workspace]/frontend/test/alert_center_provider_test.dart: quiet hours suppress non-critical alerts but allow critical ones
+00:01 +38: [workspace]/frontend/test/alert_center_provider_test.dart: delivers new, repeated, and resolved alert transitions
+00:01 +39: [workspace]/frontend/test/alert_center_provider_test.dart: targeted device refresh preserves alerts from other devices
+00:01 +40: [workspace]/frontend/test/alert_center_provider_test.dart: notification banner tap follows the tap deep link stream
+Error: Couldn't resolve the package 'dio' in 'package:dio/dio.dart'.
+lib/repositories/dio_client.dart:1:8: Error: Not found: 'package:dio/dio.dart'
+import 'package:dio/dio.dart';
+       ^
+lib/repositories/dio_client.dart:7:9: Error: Type 'Dio' not found.
+  final Dio dio;
+        ^^^
+lib/repositories/dio_client.dart:11:5: Error: Type 'Dio' not found.
+    Dio? dioInstance,
+    ^^^
+lib/repositories/dio_client.dart:7:9: Error: 'Dio' isn't a type.
+  final Dio dio;
+        ^^^
+lib/repositories/dio_client.dart:11:5: Error: 'Dio' isn't a type.
+    Dio? dioInstance,
+    ^^^
+lib/repositories/dio_client.dart:15:15: Error: Method not found: 'BaseOptions'.
+              BaseOptions(
+              ^^^^^^^^^^^
+lib/repositories/dio_client.dart:14:13: Error: Method not found: 'Dio'.
+            Dio(
+            ^^^
+lib/repositories/dio_client.dart:39:19: Error: 'DioException' isn't a type.
+        onError: (DioException error, handler) async {
+                  ^^^^^^^^^^^^
+lib/repositories/dio_client.dart:48:28: Error: The method 'Options' isn't defined for the type 'DioClient'.
+ - 'DioClient' is from 'package:iotagri_app/repositories/dio_client.dart' ('lib/repositories/dio_client.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'Options'.
+                  options: Options(headers: {'Authorization': ''}),
+                           ^^^^^^^
+lib/repositories/dio_client.dart:31:7: Error: The method 'InterceptorsWrapper' isn't defined for the type 'DioClient'.
+ - 'DioClient' is from 'package:iotagri_app/repositories/dio_client.dart' ('lib/repositories/dio_client.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'InterceptorsWrapper'.
+      InterceptorsWrapper(
+      ^^^^^^^^^^^^^^^^^^^
+00:21 +41 -1: loading [workspace]/frontend/test/dio_repositories_test.dart [E]
+  Failed to load "[workspace]/frontend/test/dio_repositories_test.dart":
+  Compilation failed for testPath=[workspace]/frontend/test/dio_repositories_test.dart: Error: Couldn't resolve the package 'dio' in 'package:dio/dio.dart'.
+  lib/repositories/dio_client.dart:1:8: Error: Not found: 'package:dio/dio.dart'
+  import 'package:dio/dio.dart';
+         ^
+  lib/repositories/dio_client.dart:7:9: Error: Type 'Dio' not found.
+    final Dio dio;
+          ^^^
+  lib/repositories/dio_client.dart:11:5: Error: Type 'Dio' not found.
+      Dio? dioInstance,
+      ^^^
+  lib/repositories/dio_client.dart:7:9: Error: 'Dio' isn't a type.
+    final Dio dio;
+          ^^^
+  lib/repositories/dio_client.dart:11:5: Error: 'Dio' isn't a type.
+      Dio? dioInstance,
+      ^^^
+  lib/repositories/dio_client.dart:15:15: Error: Method not found: 'BaseOptions'.
+                BaseOptions(
+                ^^^^^^^^^^^
+  lib/repositories/dio_client.dart:14:13: Error: Method not found: 'Dio'.
+              Dio(
+              ^^^
+  lib/repositories/dio_client.dart:39:19: Error: 'DioException' isn't a type.
+          onError: (DioException error, handler) async {
+                    ^^^^^^^^^^^^
+  lib/repositories/dio_client.dart:48:28: Error: The method 'Options' isn't defined for the type 'DioClient'.
+   - 'DioClient' is from 'package:iotagri_app/repositories/dio_client.dart' ('lib/repositories/dio_client.dart').
+  Try correcting the name to the name of an existing method, or defining a method named 'Options'.
+                    options: Options(headers: {'Authorization': ''}),
+                             ^^^^^^^
+  lib/repositories/dio_client.dart:31:7: Error: The method 'InterceptorsWrapper' isn't defined for the type 'DioClient'.
+   - 'DioClient' is from 'package:iotagri_app/repositories/dio_client.dart' ('lib/repositories/dio_client.dart').
+  Try correcting the name to the name of an existing method, or defining a method named 'InterceptorsWrapper'.
+        InterceptorsWrapper(
+        ^^^^^^^^^^^^^^^^^^^
+  .
+00:22 +41 -1: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow displays device info (model, firmware, serial, Wi-Fi signal)
+00:23 +42 -1: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow offline device shows offline Wi-Fi signal info
+00:23 +43 -1: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow rename device prefilled dialog, validation, and update
+00:24 +44 -1: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow remove device flow with destructive button and warning text
+00:24 +45 -1: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow remove device from detail screen pops back to devices screen with toast
+Error: Couldn't resolve the package 'connectivity_plus' in 'package:connectivity_plus/connectivity_plus.dart'.
+lib/services/connectivity_service.dart:2:8: Error: Not found: 'package:connectivity_plus/connectivity_plus.dart'
+import 'package:connectivity_plus/connectivity_plus.dart';
+       ^
+lib/services/connectivity_service.dart:6:9: Error: Type 'Connectivity' not found.
+  final Connectivity _connectivity;
+        ^^^^^^^^^^^^
+lib/services/connectivity_service.dart:8:27: Error: Type 'ConnectivityResult' not found.
+  StreamSubscription<List<ConnectivityResult>>? _subscription;
+                          ^^^^^^^^^^^^^^^^^^
+lib/services/connectivity_service.dart:13:24: Error: Type 'Connectivity' not found.
+  ConnectivityService({Connectivity? connectivity})
+                       ^^^^^^^^^^^^
+lib/services/connectivity_service.dart:29:27: Error: Type 'ConnectivityResult' not found.
+  void _updateStatus(List<ConnectivityResult> results) {
+                          ^^^^^^^^^^^^^^^^^^
+lib/services/connectivity_service.dart:6:9: Error: 'Connectivity' isn't a type.
+  final Connectivity _connectivity;
+        ^^^^^^^^^^^^
+lib/services/connectivity_service.dart:8:27: Error: 'ConnectivityResult' isn't a type.
+  StreamSubscription<List<ConnectivityResult>>? _subscription;
+                          ^^^^^^^^^^^^^^^^^^
+lib/services/connectivity_service.dart:13:24: Error: 'Connectivity' isn't a type.
+  ConnectivityService({Connectivity? connectivity})
+                       ^^^^^^^^^^^^
+lib/services/connectivity_service.dart:14:41: Error: Method not found: 'Connectivity'.
+      : _connectivity = connectivity ?? Connectivity() {
+                                        ^^^^^^^^^^^^
+lib/services/connectivity_service.dart:29:27: Error: 'ConnectivityResult' isn't a type.
+  void _updateStatus(List<ConnectivityResult> results) {
+                          ^^^^^^^^^^^^^^^^^^
+lib/services/connectivity_service.dart:30:66: Error: The getter 'ConnectivityResult' isn't defined for the type 'ConnectivityService'.
+ - 'ConnectivityService' is from 'package:iotagri_app/services/connectivity_service.dart' ('lib/services/connectivity_service.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'ConnectivityResult'.
+    final offline = results.isEmpty || results.every((r) => r == ConnectivityResult.none);
+                                                                 ^^^^^^^^^^^^^^^^^^
+00:25 +45 -2: loading [workspace]/frontend/test/phase12_global_states_a11y_test.dart [E]
+  Failed to load "[workspace]/frontend/test/phase12_global_states_a11y_test.dart":
+  Compilation failed for testPath=[workspace]/frontend/test/phase12_global_states_a11y_test.dart: Error: Couldn't resolve the package 'connectivity_plus' in 'package:connectivity_plus/connectivity_plus.dart'.
+  lib/services/connectivity_service.dart:2:8: Error: Not found: 'package:connectivity_plus/connectivity_plus.dart'
+  import 'package:connectivity_plus/connectivity_plus.dart';
+         ^
+  lib/services/connectivity_service.dart:6:9: Error: Type 'Connectivity' not found.
+    final Connectivity _connectivity;
+          ^^^^^^^^^^^^
+  lib/services/connectivity_service.dart:8:27: Error: Type 'ConnectivityResult' not found.
+    StreamSubscription<List<ConnectivityResult>>? _subscription;
+                            ^^^^^^^^^^^^^^^^^^
+  lib/services/connectivity_service.dart:13:24: Error: Type 'Connectivity' not found.
+    ConnectivityService({Connectivity? connectivity})
+                         ^^^^^^^^^^^^
+  lib/services/connectivity_service.dart:29:27: Error: Type 'ConnectivityResult' not found.
+    void _updateStatus(List<ConnectivityResult> results) {
+                            ^^^^^^^^^^^^^^^^^^
+  lib/services/connectivity_service.dart:6:9: Error: 'Connectivity' isn't a type.
+    final Connectivity _connectivity;
+          ^^^^^^^^^^^^
+  lib/services/connectivity_service.dart:8:27: Error: 'ConnectivityResult' isn't a type.
+    StreamSubscription<List<ConnectivityResult>>? _subscription;
+                            ^^^^^^^^^^^^^^^^^^
+  lib/services/connectivity_service.dart:13:24: Error: 'Connectivity' isn't a type.
+    ConnectivityService({Connectivity? connectivity})
+                         ^^^^^^^^^^^^
+  lib/services/connectivity_service.dart:14:41: Error: Method not found: 'Connectivity'.
+        : _connectivity = connectivity ?? Connectivity() {
+                                          ^^^^^^^^^^^^
+  lib/services/connectivity_service.dart:29:27: Error: 'ConnectivityResult' isn't a type.
+    void _updateStatus(List<ConnectivityResult> results) {
+                            ^^^^^^^^^^^^^^^^^^
+  lib/services/connectivity_service.dart:30:66: Error: The getter 'ConnectivityResult' isn't defined for the type 'ConnectivityService'.
+   - 'ConnectivityService' is from 'package:iotagri_app/services/connectivity_service.dart' ('lib/services/connectivity_service.dart').
+  Try correcting the name to the name of an existing getter, or defining a getter or field named 'ConnectivityResult'.
+      final offline = results.isEmpty || results.every((r) => r == ConnectivityResult.none);
+                                                                   ^^^^^^^^^^^^^^^^^^
+  .
+00:25 +46 -2: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow remove device from detail screen pops back to devices screen with toast
+00:25 +47 -2: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow remove device from detail screen pops back to devices screen with toast
+00:25 +48 -2: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow remove device from detail screen pops back to devices screen with toast
+00:25 +48 -2: [workspace]/frontend/test/history_flow_test.dart: generates a PDF document
+Helvetica-Bold has no Unicode support see https://github.com/DavBfr/dart_pdf/wiki/Fonts-Management
+Helvetica has no Unicode support see https://github.com/DavBfr/dart_pdf/wiki/Fonts-Management
+00:25 +49 -2: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow remove device from detail screen pops back to devices screen with toast
+00:25 +50 -2: [workspace]/frontend/test/phase11_account_support_test.dart: Phase 11: Account Page & Settings Live Persistence Account page renders all required rows
+00:27 +51 -2: [workspace]/frontend/test/phase11_account_support_test.dart: Phase 11: Account Page & Settings Live Persistence AppSettingsProvider persists live updates to SharedPreferences
+00:27 +52 -2: [workspace]/frontend/test/phase11_account_support_test.dart: Phase 11: Change Password Screen Strength meter updates dynamically and submission succeeds
+00:28 +53 -2: [workspace]/frontend/test/phase11_account_support_test.dart: Phase 11: Support Flow Support tickets list displays tickets and filter chips work
+00:28 +54 -2: [workspace]/frontend/test/phase11_account_support_test.dart: Phase 11: Support Flow Create ticket auto-attaches device information
+00:29 +55 -2: [workspace]/frontend/test/phase11_account_support_test.dart: Phase 11: Support Flow Ticket detail displays messages and allows replies
+00:29 +56 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +57 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +58 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +59 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +60 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +61 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +62 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +63 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +64 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +65 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +66 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +67 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +68 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +69 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +70 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +71 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +72 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +73 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +74 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +75 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +76 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +77 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:29 +78 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:30 +79 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:30 +80 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:30 +81 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:30 +82 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:30 +83 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:30 +84 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:30 +85 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:31 +86 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:31 +87 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:31 +88 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:31 +89 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:31 +90 -2: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:31 +91 -2: [workspace]/frontend/test/widget_test.dart: registration returns to the authenticated root screen
+00:31 +92 -2: [workspace]/frontend/test/widget_test.dart: login stays unauthenticated when backend is unavailable
+00:31 +93 -2: [workspace]/frontend/test/widget_test.dart: access token role claim drives admin routing, including role arrays
+00:31 +94 -2: [workspace]/frontend/test/widget_test.dart: dashboard shows gateway status summary
+00:31 +95 -2: [workspace]/frontend/test/widget_test.dart: farm health shows add-device welcome with no devices
+00:31 +96 -2: [workspace]/frontend/test/widget_test.dart: farm health shows healthy state
+00:32 +97 -2: [workspace]/frontend/test/widget_test.dart: farm health shows attention for offline device
+00:32 +98 -2: [workspace]/frontend/test/widget_test.dart: farm health shows critical low-water alert
+00:32 +99 -2: [workspace]/frontend/test/widget_test.dart: device list search appears only above six devices
+00:32 +100 -2: [workspace]/frontend/test/widget_test.dart: device tab keeps the dashboard menu
+00:32 +101 -2: [workspace]/frontend/test/widget_test.dart: profile tab shows account info and logout below the form
+00:33 +102 -2: [workspace]/frontend/test/widget_test.dart: device deletion requires confirmation and removes the row
+00:33 +103 -2: [workspace]/frontend/test/widget_test.dart: device creation carries generated ID into provisioning
+00:33 +104 -2: [workspace]/frontend/test/widget_test.dart: detail disables controls offline and notes saved schedules
+00:33 +105 -2: [workspace]/frontend/test/widget_test.dart: detail shows running pump state
+00:33 +106 -2: [workspace]/frontend/test/widget_test.dart: manual mode pauses schedules and auto mode restores them
+00:34 +107 -2: [workspace]/frontend/test/widget_test.dart: detail shows missing sensor state
+00:34 +108 -2: [workspace]/frontend/test/widget_test.dart: sensor grid marks values below configured threshold
+00:34 +109 -2: [workspace]/frontend/test/widget_test.dart: pump control shows command-sending state
+00:34 +110 -2: Some tests failed.
+
+Failing tests:
+  [workspace]/frontend/test/dio_repositories_test.dart: loading [workspace]/frontend/test/dio_repositories_test.dart
+  [workspace]/frontend/test/phase12_global_states_a11y_test.dart: loading [workspace]/frontend/test/phase12_global_states_a11y_test.dart

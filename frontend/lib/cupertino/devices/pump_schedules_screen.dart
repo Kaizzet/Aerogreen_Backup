@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../models/device.dart';
 import '../../models/pump_schedule.dart';
+import '../../models/pump_schedule_validation.dart';
 import '../../services/api_service.dart';
 
 enum SchedulePreset {
@@ -411,39 +412,15 @@ class _AddScheduleDialogState extends State<AddScheduleDialog> {
   }
 
   String? _validateMistLength(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Vui lòng nhập thời gian phun';
-    }
-    final length = int.tryParse(value);
-    if (length == null || length < 1 || length > 120) {
-      return 'Thời gian phun từ 1-120 giây';
-    }
-    return null;
+    return PumpScheduleValidation.mistLength(value);
   }
 
   String? _validateInterval(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Vui lòng nhập khoảng cách';
-    }
-    final interval = int.tryParse(value);
-    if (interval == null || interval < 1 || interval > 60) {
-      return 'Khoảng cách từ 1-60 phút';
-    }
-    final mistLength = int.tryParse(_mistLengthController.text);
-    if (mistLength != null && mistLength >= interval * 60) {
-      return 'Thời gian phun phải nhỏ hơn khoảng cách';
-    }
-    return null;
+    return PumpScheduleValidation.interval(value, _mistLengthController.text);
   }
 
   String? _validateTimeWindow() {
-    final startMinutes = _startTime.hour * 60 + _startTime.minute;
-    final endMinutes = _endTime.hour * 60 + _endTime.minute;
-
-    if (endMinutes <= startMinutes && endMinutes < startMinutes + 60) {
-      return 'Giờ kết thúc phải sau giờ bắt đầu (trừ khi qua đêm)';
-    }
-    return null;
+    return PumpScheduleValidation.timeWindow(_startTime, _endTime);
   }
 
   String _getLiveSummary() {

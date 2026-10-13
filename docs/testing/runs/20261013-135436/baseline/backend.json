@@ -1,0 +1,19 @@
+{
+    "workingDirectory":  "[workspace]",
+    "started":  "2026-10-13T13:55:11.7879243+07:00",
+    "check":  "backend",
+    "command":  [
+                    "dotnet",
+                    "test",
+                    "backend/tests/IOTAgriBackend.Tests.csproj",
+                    "--configuration",
+                    "Release",
+                    "--no-restore",
+                    "--logger",
+                    "trx;LogFileName=backend.trx",
+                    "--results-directory",
+                    "[workspace]\\docs\\testing\\runs\\20261013-135436\\baseline"
+                ],
+    "phase":  "baseline",
+    "exitCode":  0
+}

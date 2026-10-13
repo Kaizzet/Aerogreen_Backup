@@ -1,0 +1,6 @@
+Started: 2026-10-13T14:26:23.8756665+07:00
+Working directory: [workspace]\frontend
+Command: [workspace]\.runtime\flutter\bin\flutter.bat analyze --no-pub
+Exit code: 0
+Analyzing frontend...                                           
+No issues found! (ran in 20.3s)

@@ -1,0 +1,15 @@
+Started: 2026-10-13T14:13:10.7815203+07:00
+Working directory: [workspace]
+Command: dotnet test backend/tests/IOTAgriBackend.Tests.csproj --configuration Release --no-restore --logger trx;LogFileName=backend.trx --results-directory [workspace]\docs\testing\runs\20261013-135436\final --collect XPlat Code Coverage
+Exit code: 0
+  IOTAgriBackend -> [workspace]\backend\bin\Release\net10.0\IOTAgriBackend.dll
+  IOTAgriBackend.Tests -> [workspace]\backend\tests\bin\Release\net10.0\IOTAgriBackend.Tests.dll
+Test run for [workspace]\backend\tests\bin\Release\net10.0\IOTAgriBackend.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+WARNING: Overwriting results file: [workspace]\docs\testing\runs\20261013-135436\final\backend.trx
+Results File: [workspace]\docs\testing\runs\20261013-135436\final\backend.trx
+
+Passed!  - Failed:     0, Passed:   105, Skipped:     0, Total:   105, Duration: 325 ms - IOTAgriBackend.Tests.dll (net10.0)
+
+Attachments:
+  [workspace]\docs\testing\runs\20261013-135436\final\f7ac865a-f1c0-4948-b4e3-6e8c680dc15f\coverage.cobertura.xml

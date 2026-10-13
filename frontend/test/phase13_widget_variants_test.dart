@@ -1,3 +1,4 @@
+import 'package:iotagri_app/models/pump_schedule_validation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iotagri_app/cupertino/dashboard/farm_health_card.dart';
@@ -448,45 +449,24 @@ void main() {
     );
   });
 
-  group('Phase 13: Schedule Validation Rules', () {
-    test('mist length must be less than interval', () {
-      bool validateSchedule(int mistSeconds, int intervalMinutes) {
-        final intervalSeconds = intervalMinutes * 60;
-        return mistSeconds > 0 &&
-            mistSeconds <= 120 &&
-            intervalMinutes >= 1 &&
-            intervalMinutes <= 60 &&
-            mistSeconds < intervalSeconds;
+  group('Phase 13: Production Schedule Validation Rules', () {
+    test('mist length and interval use production inclusive bounds', () {
+      for (final value in ['', '0', '121', 'invalid']) {
+        expect(PumpScheduleValidation.mistLength(value), isNotNull);
       }
-
-      expect(validateSchedule(15, 5), isTrue); // 15s < 300s -> Valid
-      expect(validateSchedule(120, 1), isFalse); // 120s > 60s -> Invalid
-      expect(
-        validateSchedule(60, 1),
-        isFalse,
-      ); // 60s == 60s -> Invalid (must be less)
-      expect(validateSchedule(10, 1), isTrue); // 10s < 60s -> Valid
+      expect(PumpScheduleValidation.mistLength('1'), isNull);
+      expect(PumpScheduleValidation.mistLength('120'), isNull);
+      expect(PumpScheduleValidation.interval('1', '60'), isNotNull);
+      expect(PumpScheduleValidation.interval('1', '59'), isNull);
+      expect(PumpScheduleValidation.interval('0', '10'), isNotNull);
+      expect(PumpScheduleValidation.interval('61', '10'), isNotNull);
     });
-
-    test('end time must be after start time unless overnight window', () {
-      bool validateActiveHours(
-        int startHour,
-        int startMin,
-        int endHour,
-        int endMin, {
-        bool allowOvernight = true,
-      }) {
-        final start = startHour * 60 + startMin;
-        final end = endHour * 60 + endMin;
-        if (start == end) return false;
-        if (!allowOvernight) return end > start;
-        return true; // Overnight allowed when explicitly supported
-      }
-
-      expect(validateActiveHours(6, 0, 18, 0, allowOvernight: false), isTrue);
-      expect(validateActiveHours(18, 0, 6, 0, allowOvernight: false), isFalse);
-      expect(validateActiveHours(18, 0, 6, 0, allowOvernight: true), isTrue);
-      expect(validateActiveHours(12, 0, 12, 0), isFalse); // Same start/end
+    test('time window preserves current same-day form behavior', () {
+      final start=DateTime(2030,1,1,6);
+      expect(PumpScheduleValidation.timeWindow(start,DateTime(2030,1,1,18)),isNull);
+      expect(PumpScheduleValidation.timeWindow(start,start),isNotNull);
+      // Backend supports overnight; current frontend form rejects it.
+      expect(PumpScheduleValidation.timeWindow(DateTime(2030,1,1,18),start),isNotNull);
     });
   });
 }

@@ -1,0 +1,12 @@
+{
+    "workingDirectory":  "[workspace]\\frontend",
+    "started":  "2026-10-13T13:56:05.2475841+07:00",
+    "check":  "analyze",
+    "command":  [
+                    "[workspace]\\.runtime\\flutter\\bin\\flutter.bat",
+                    "analyze",
+                    "--no-pub"
+                ],
+    "phase":  "baseline",
+    "exitCode":  1
+}

@@ -1,0 +1,11 @@
+Started: 2026-10-13T14:04:10.9231643+07:00
+Working directory: [workspace]\frontend
+Command: [workspace]\.runtime\flutter\bin\flutter.bat test --no-pub --reporter expanded test/add_device_test.dart,test/pump_control_test.dart
+Exit code: 1
+00:00 +0: loading [workspace]/frontend/test/add_device_test.dart,test/pump_control_test.dart
+00:00 +0 -1: loading [workspace]/frontend/test/add_device_test.dart,test/pump_control_test.dart [E]
+  Failed to load "[workspace]/frontend/test/add_device_test.dart,test/pump_control_test.dart": Does not exist.
+00:00 +0 -1: Some tests failed.
+
+Failing tests:
+  [workspace]/frontend/test/add_device_test.dart,test/pump_control_test.dart: loading [workspace]/frontend/test/add_device_test.dart,test/pump_control_test.dart

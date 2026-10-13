@@ -27,12 +27,13 @@ public class MqttIngestionService : BackgroundService
     public MqttIngestionService(
         IServiceScopeFactory scopeFactory,
         IConfiguration configuration,
-        ILogger<MqttIngestionService> logger)
+        ILogger<MqttIngestionService> logger,
+        IMqttClient? mqttClient = null)
     {
         _scopeFactory = scopeFactory;
         _configuration = configuration;
         _logger = logger;
-        _mqttClient = new MqttClientFactory().CreateMqttClient();
+        _mqttClient = mqttClient ?? new MqttClientFactory().CreateMqttClient();
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -288,14 +289,7 @@ public class MqttIngestionService : BackgroundService
             }
             else
             {
-                command.Status = status.WasSuccessful
-                    ? PumpCommandStatus.Acknowledged
-                    : PumpCommandStatus.Failed;
-                command.AcknowledgedAt = now;
-                command.AcknowledgedIsOn = status.IsOn;
-                command.FailureReason = status.WasSuccessful
-                    ? null
-                    : status.NormalizedReason ?? "DEVICE_REJECTED";
+                PumpCommandRules.ApplyStatus(command, status, now);
             }
         }
 

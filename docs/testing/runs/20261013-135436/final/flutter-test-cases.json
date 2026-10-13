@@ -1,0 +1,695 @@
+﻿[
+    {
+        "name":  "tracks unread alerts and filters critical alerts",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/alert_center_provider_test.dart"
+    },
+    {
+        "name":  "debounces repeated alert delivery within the interval",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/alert_center_provider_test.dart"
+    },
+    {
+        "name":  "quiet hours suppress non-critical alerts but allow critical ones",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/alert_center_provider_test.dart"
+    },
+    {
+        "name":  "delivers new, repeated, and resolved alert transitions",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/alert_center_provider_test.dart"
+    },
+    {
+        "name":  "targeted device refresh preserves alerts from other devices",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/alert_center_provider_test.dart"
+    },
+    {
+        "name":  "provisioning uses device route and returns server setup contract",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/api_session_test.dart"
+    },
+    {
+        "name":  "provisioning HTTP error is propagated without token refresh",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/api_session_test.dart"
+    },
+    {
+        "name":  "HTTP refresh rotates stored values and retries original request once",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/api_session_test.dart"
+    },
+    {
+        "name":  "concurrent unauthorized requests share one pending refresh",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/api_session_test.dart"
+    },
+    {
+        "name":  "rejected refresh clears storage and reports expired session",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/api_session_test.dart"
+    },
+    {
+        "name":  "second unauthorized response stops retry rather than refreshing again",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/api_session_test.dart"
+    },
+    {
+        "name":  "transient refresh failure retains session and does not retry request",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/api_session_test.dart"
+    },
+    {
+        "name":  "login uses injected HTTP transport and surfaces storage failure",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/api_session_test.dart"
+    },
+    {
+        "name":  "notification banner tap follows the tap deep link stream",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/alert_center_provider_test.dart"
+    },
+    {
+        "name":  "prepare advances and back restores preparation",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/add_device_test.dart"
+    },
+    {
+        "name":  "QR blocks repeated scan and advances to Wi-Fi",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/add_device_test.dart"
+    },
+    {
+        "name":  "BLE simulation discovers devices and selection advances",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/add_device_test.dart"
+    },
+    {
+        "name":  "Wi-Fi requires network and nonempty credential",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/add_device_test.dart"
+    },
+    {
+        "name":  "name required before API request",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/add_device_test.dart"
+    },
+    {
+        "name":  "save blocks duplicate submission and displays returned device",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/add_device_test.dart"
+    },
+    {
+        "name":  "controller publishes pending then authenticated state",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/default_auth_test.dart"
+    },
+    {
+        "name":  "restore/storage and logout errors become state without unhandled futures",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/default_auth_test.dart"
+    },
+    {
+        "name":  "save surfaces _Exception: Exception: already claimed and enables retry",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/add_device_test.dart"
+    },
+    {
+        "name":  "save surfaces TimeoutException: TimeoutException: fixture timeout and enables retry",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/add_device_test.dart"
+    },
+    {
+        "name":  "save surfaces _Exception: Exception: fixture API unavailable and enables retry",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/add_device_test.dart"
+    },
+    {
+        "name":  "Phase 13: Dio Repositories Unit Tests DioSupportTicketRepositoryImpl fetches and maps tickets correctly",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/dio_repositories_test.dart"
+    },
+    {
+        "name":  "Phase 13: Dio Repositories Unit Tests DioClient initializes with standardized options and interceptor",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/dio_repositories_test.dart"
+    },
+    {
+        "name":  "pump repository sends production payload and maps acknowledged result",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/dio_http_test.dart"
+    },
+    {
+        "name":  "HTTP server failure remains a DioException",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/dio_http_test.dart"
+    },
+    {
+        "name":  "Dio refresh 200 terminates and retries at most once",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/dio_http_test.dart"
+    },
+    {
+        "name":  "Dio refresh 401 terminates and retries at most once",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/dio_http_test.dart"
+    },
+    {
+        "name":  "Dio successful refresh resolves original response",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/dio_http_test.dart"
+    },
+    {
+        "name":  "Phase 10: Device Settings flow displays device info (model, firmware, serial, Wi-Fi signal)",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/device_settings_test.dart"
+    },
+    {
+        "name":  "Phase 13: RealtimeClient (MQTT / WebSocket Stub) Connect, subscribe, and route incoming telemetry messages",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/dio_repositories_test.dart"
+    },
+    {
+        "name":  "Phase 10: Device Settings flow offline device shows offline Wi-Fi signal info",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/device_settings_test.dart"
+    },
+    {
+        "name":  "Phase 13: RealtimeClient (MQTT / WebSocket Stub) Schedule reconnect enters reconnecting state",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/dio_repositories_test.dart"
+    },
+    {
+        "name":  "default auth widget validates before invoking repository",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/default_auth_test.dart"
+    },
+    {
+        "name":  "calculates min average and max for the selected sensor",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/history_flow_test.dart"
+    },
+    {
+        "name":  "maps solution temperature and TDS into history samples",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/history_flow_test.dart"
+    },
+    {
+        "name":  "generates a real CSV export with readings and pump events",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/history_flow_test.dart"
+    },
+    {
+        "name":  "generates a PDF document",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/history_flow_test.dart"
+    },
+    {
+        "name":  "Phase 12: Global OfflineBanner Tests Offline banner displays when connectivity is offline",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase12_global_states_a11y_test.dart"
+    },
+    {
+        "name":  "Phase 10: Device Settings flow rename device prefilled dialog, validation, and update",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/device_settings_test.dart"
+    },
+    {
+        "name":  "Phase 12: Global OfflineBanner Tests Offline banner is hidden when online",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase12_global_states_a11y_test.dart"
+    },
+    {
+        "name":  "Phase 11: Account Page \u0026 Settings Live Persistence Account page renders all required rows",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase11_account_support_test.dart"
+    },
+    {
+        "name":  "Phase 11: Account Page \u0026 Settings Live Persistence AppSettingsProvider persists live updates to SharedPreferences",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase11_account_support_test.dart"
+    },
+    {
+        "name":  "Phase 10: Device Settings flow remove device flow with destructive button and warning text",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/device_settings_test.dart"
+    },
+    {
+        "name":  "Phase 12: Localization (vi + en) Audit All localization keys exist in both Vietnamese and English dictionaries",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase12_global_states_a11y_test.dart"
+    },
+    {
+        "name":  "Phase 12: Localization (vi + en) Audit Context extension dynamically translates based on locale",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase12_global_states_a11y_test.dart"
+    },
+    {
+        "name":  "Phase 12: Accessibility and Scaling Audit Text scaling at 1.5x does not cause overflow on banner",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase12_global_states_a11y_test.dart"
+    },
+    {
+        "name":  "Phase 12: Accessibility and Scaling Audit Offline banner includes Semantics label for screen readers",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase12_global_states_a11y_test.dart"
+    },
+    {
+        "name":  "Phase 11: Change Password Screen Strength meter updates dynamically and submission succeeds",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase11_account_support_test.dart"
+    },
+    {
+        "name":  "Phase 10: Device Settings flow remove device from detail screen pops back to devices screen with toast",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/device_settings_test.dart"
+    },
+    {
+        "name":  "Phase 11: Support Flow Support tickets list displays tickets and filter chips work",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase11_account_support_test.dart"
+    },
+    {
+        "name":  "Phase 11: Support Flow Create ticket auto-attaches device information",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase11_account_support_test.dart"
+    },
+    {
+        "name":  "Phase 11: Support Flow Ticket detail displays messages and allows replies",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase11_account_support_test.dart"
+    },
+    {
+        "name":  "Phase 13: Home/Dashboard FarmHealthCard Variants noDevices state: neutral card, ChÃ o má»«ng Ä‘áº¿n Aerogreen, stats hidden",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase13_widget_variants_test.dart"
+    },
+    {
+        "name":  "Phase 13: Home/Dashboard FarmHealthCard Variants healthy state: all towers optimal text and green tint",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase13_widget_variants_test.dart"
+    },
+    {
+        "name":  "Phase 13: Home/Dashboard FarmHealthCard Variants attention state: offline tower requires attention",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase13_widget_variants_test.dart"
+    },
+    {
+        "name":  "Phase 13: Home/Dashboard FarmHealthCard Variants critical state: low water level alert triggers critical card",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase13_widget_variants_test.dart"
+    },
+    {
+        "name":  "Phase 13 Integration Test: login \u003e add device \u003e open detail \u003e manual run \u003e view history \u003e export",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase13_integration_flow_test.dart"
+    },
+    {
+        "name":  "card gates commands online=true sending=true",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/pump_control_test.dart"
+    },
+    {
+        "name":  "Phase 13: Device Detail Variants healthy online variant: displays regular telemetry and auto pump mode",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase13_widget_variants_test.dart"
+    },
+    {
+        "name":  "card gates commands online=true sending=false",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/pump_control_test.dart"
+    },
+    {
+        "name":  "card gates commands online=false sending=true",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/pump_control_test.dart"
+    },
+    {
+        "name":  "Phase 13: Device Detail Variants warning variant: sensor thresholds breached marked in warning colors",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase13_widget_variants_test.dart"
+    },
+    {
+        "name":  "card gates commands online=false sending=false",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/pump_control_test.dart"
+    },
+    {
+        "name":  "running card formats countdown and invokes stop",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/pump_control_test.dart"
+    },
+    {
+        "name":  "Phase 13: Device Detail Variants offline variant: greyed controls and schedule-continues message",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase13_widget_variants_test.dart"
+    },
+    {
+        "name":  "pump schedule screen opens from the Cupertino app",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/widget_test.dart"
+    },
+    {
+        "name":  "Phase 13: Device Detail Variants running pump variant: shows countdown and Stop button",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase13_widget_variants_test.dart"
+    },
+    {
+        "name":  "Phase 13: Device Detail Variants command sending variant: shows activity indicator and sending state",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase13_widget_variants_test.dart"
+    },
+    {
+        "name":  "Phase 13: Production Schedule Validation Rules mist length and interval use production inclusive bounds",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase13_widget_variants_test.dart"
+    },
+    {
+        "name":  "Phase 13: Production Schedule Validation Rules time window preserves current same-day form behavior",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/phase13_widget_variants_test.dart"
+    },
+    {
+        "name":  "manual duration 30 sends once and blocks pending commands",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/pump_control_test.dart"
+    },
+    {
+        "name":  "registration returns to the authenticated root screen",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/widget_test.dart"
+    },
+    {
+        "name":  "login stays unauthenticated when backend is unavailable",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/widget_test.dart"
+    },
+    {
+        "name":  "access token role claim drives admin routing, including role arrays",
+        "kind":  "unit",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/widget_test.dart"
+    },
+    {
+        "name":  "dashboard shows gateway status summary",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/widget_test.dart"
+    },
+    {
+        "name":  "farm health shows add-device welcome with no devices",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/widget_test.dart"
+    },
+    {
+        "name":  "farm health shows healthy state",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/widget_test.dart"
+    },
+    {
+        "name":  "farm health shows attention for offline device",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/widget_test.dart"
+    },
+    {
+        "name":  "farm health shows critical low-water alert",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/widget_test.dart"
+    },
+    {
+        "name":  "manual duration 60 sends once and blocks pending commands",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/pump_control_test.dart"
+    },
+    {
+        "name":  "device list search appears only above six devices",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/widget_test.dart"
+    },
+    {
+        "name":  "manual duration 300 sends once and blocks pending commands",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/pump_control_test.dart"
+    },
+    {
+        "name":  "device tab keeps the dashboard menu",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/widget_test.dart"
+    },
+    {
+        "name":  "manual duration 600 sends once and blocks pending commands",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/pump_control_test.dart"
+    },
+    {
+        "name":  "profile tab shows account info and logout below the form",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/widget_test.dart"
+    },
+    {
+        "name":  "low water prevents request and explains safety block",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/pump_control_test.dart"
+    },
+    {
+        "name":  "device deletion requires confirmation and removes the row",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/widget_test.dart"
+    },
+    {
+        "name":  "API error is displayed and sending flag is released",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/pump_control_test.dart"
+    },
+    {
+        "name":  "device creation carries generated ID into provisioning",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/widget_test.dart"
+    },
+    {
+        "name":  "detail disables controls offline and notes saved schedules",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/widget_test.dart"
+    },
+    {
+        "name":  "detail shows running pump state",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/widget_test.dart"
+    },
+    {
+        "name":  "manual mode pauses schedules and auto mode restores them",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/widget_test.dart"
+    },
+    {
+        "name":  "detail shows missing sensor state",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/widget_test.dart"
+    },
+    {
+        "name":  "sensor grid marks values below configured threshold",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/widget_test.dart"
+    },
+    {
+        "name":  "pump control shows command-sending state",
+        "kind":  "widget",
+        "result":  "success",
+        "skipped":  false,
+        "source":  "file:///[workspace]/frontend/test/widget_test.dart"
+    }
+]

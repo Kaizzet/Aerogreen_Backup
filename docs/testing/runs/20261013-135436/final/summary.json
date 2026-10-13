@@ -1,0 +1,30 @@
+﻿{
+    "backendCounters":  {
+                            "notExecuted":  0,
+                            "failed":  0,
+                            "total":  105,
+                            "passed":  105
+                        },
+    "backendLines":  {
+                         "found":  10932,
+                         "hit":  263,
+                         "percent":  2.4057811928283939
+                     },
+    "backendBranches":  {
+                            "found":  970,
+                            "hit":  223,
+                            "percent":  22.989690721649485
+                        },
+    "flutterCases":  99,
+    "flutterRunnerSuccess":  true,
+    "flutterLoadFailures":  0,
+    "flutterUnit":  34,
+    "flutterWidget":  65,
+    "flutterFailed":  0,
+    "flutterSkipped":  0,
+    "flutterLines":  {
+                         "found":  8109,
+                         "hit":  3613,
+                         "percent":  44.5554322357874
+                     }
+}

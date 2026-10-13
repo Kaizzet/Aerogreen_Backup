@@ -1,0 +1,9 @@
+Started: 2026-10-13T14:09:34.5177766+07:00
+Working directory: [workspace]\frontend
+Command: [workspace]\.runtime\flutter\bin\flutter.bat test --no-pub --reporter expanded --file-reporter json:[workspace]\docs\testing\runs\20261013-135436\development\frontend-events.jsonl test/default_auth_test.dart
+Exit code: 0
+00:00 +0: loading [workspace]/frontend/test/default_auth_test.dart
+00:00 +0: controller publishes pending then authenticated state
+00:00 +1: restore/storage and logout errors become state without unhandled futures
+00:00 +2: default auth widget validates before invoking repository
+00:01 +3: All tests passed!

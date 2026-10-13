@@ -1,0 +1,17 @@
+{
+    "workingDirectory":  "[workspace]\\frontend",
+    "started":  "2026-10-13T14:11:29.3437622+07:00",
+    "check":  "web",
+    "command":  [
+                    "[workspace]\\.runtime\\flutter\\bin\\flutter.bat",
+                    "test",
+                    "--no-pub",
+                    "--platform",
+                    "chrome",
+                    "--reporter",
+                    "expanded",
+                    "test/add_device_web_test.dart"
+                ],
+    "phase":  "final",
+    "exitCode":  1
+}

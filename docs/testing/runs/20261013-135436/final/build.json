@@ -1,0 +1,15 @@
+{
+    "workingDirectory":  "[workspace]",
+    "started":  "2026-10-13T14:11:40.2328204+07:00",
+    "check":  "build",
+    "command":  [
+                    "dotnet",
+                    "build",
+                    "backend/IOTAgriBackend.csproj",
+                    "--configuration",
+                    "Release",
+                    "--no-restore"
+                ],
+    "phase":  "final",
+    "exitCode":  0
+}

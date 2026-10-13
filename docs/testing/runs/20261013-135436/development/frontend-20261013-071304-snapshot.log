@@ -1,0 +1,108 @@
+Started: 2026-10-13T14:12:34.1997681+07:00
+Working directory: [workspace]\frontend
+Command: [workspace]\.runtime\flutter\bin\flutter.bat test --no-pub --reporter expanded --file-reporter json:[workspace]\docs\testing\runs\20261013-135436\final\frontend-events.jsonl --coverage
+Exit code: 0
+00:00 +0: loading [workspace]/frontend/test/add_device_test.dart
+00:00 +0: [workspace]/frontend/test/api_session_test.dart: provisioning uses device route and returns server setup contract
+00:00 +1: [workspace]/frontend/test/alert_center_provider_test.dart: tracks unread alerts and filters critical alerts
+00:00 +2: [workspace]/frontend/test/add_device_test.dart: prepare advances and back restores preparation
+00:00 +3: [workspace]/frontend/test/add_device_test.dart: prepare advances and back restores preparation
+00:00 +4: [workspace]/frontend/test/add_device_test.dart: prepare advances and back restores preparation
+00:00 +5: [workspace]/frontend/test/add_device_test.dart: prepare advances and back restores preparation
+00:00 +6: [workspace]/frontend/test/add_device_test.dart: prepare advances and back restores preparation
+00:00 +7: [workspace]/frontend/test/add_device_test.dart: prepare advances and back restores preparation
+00:00 +8: [workspace]/frontend/test/add_device_test.dart: prepare advances and back restores preparation
+00:00 +9: [workspace]/frontend/test/add_device_test.dart: prepare advances and back restores preparation
+00:00 +10: [workspace]/frontend/test/add_device_test.dart: prepare advances and back restores preparation
+00:00 +11: [workspace]/frontend/test/add_device_test.dart: prepare advances and back restores preparation
+00:00 +12: [workspace]/frontend/test/add_device_test.dart: prepare advances and back restores preparation
+00:00 +13: [workspace]/frontend/test/add_device_test.dart: prepare advances and back restores preparation
+00:00 +14: [workspace]/frontend/test/add_device_test.dart: prepare advances and back restores preparation
+00:00 +15: [workspace]/frontend/test/add_device_test.dart: prepare advances and back restores preparation
+00:00 +16: [workspace]/frontend/test/add_device_test.dart: prepare advances and back restores preparation
+00:01 +17: [workspace]/frontend/test/default_auth_test.dart: default auth widget validates before invoking repository
+00:01 +18: [workspace]/frontend/test/default_auth_test.dart: default auth widget validates before invoking repository
+00:01 +19: [workspace]/frontend/test/default_auth_test.dart: default auth widget validates before invoking repository
+00:01 +20: [workspace]/frontend/test/default_auth_test.dart: default auth widget validates before invoking repository
+00:02 +21: [workspace]/frontend/test/add_device_test.dart: name required before API request
+00:02 +22: [workspace]/frontend/test/add_device_test.dart: save blocks duplicate submission and displays returned device
+00:02 +23: [workspace]/frontend/test/add_device_test.dart: save surfaces _Exception: Exception: already claimed and enables retry
+00:03 +24: [workspace]/frontend/test/add_device_test.dart: save surfaces TimeoutException: TimeoutException: fixture timeout and enables retry
+00:03 +25: [workspace]/frontend/test/add_device_test.dart: save surfaces _Exception: Exception: fixture API unavailable and enables retry
+00:08 +26: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow displays device info (model, firmware, serial, Wi-Fi signal)
+00:08 +27: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow displays device info (model, firmware, serial, Wi-Fi signal)
+00:08 +28: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow displays device info (model, firmware, serial, Wi-Fi signal)
+00:08 +29: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow displays device info (model, firmware, serial, Wi-Fi signal)
+00:08 +30: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow displays device info (model, firmware, serial, Wi-Fi signal)
+00:08 +31: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow displays device info (model, firmware, serial, Wi-Fi signal)
+00:08 +32: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow displays device info (model, firmware, serial, Wi-Fi signal)
+00:08 +33: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow displays device info (model, firmware, serial, Wi-Fi signal)
+00:09 +34: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow displays device info (model, firmware, serial, Wi-Fi signal)
+00:09 +35: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow displays device info (model, firmware, serial, Wi-Fi signal)
+00:09 +36: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow displays device info (model, firmware, serial, Wi-Fi signal)
+00:09 +37: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow displays device info (model, firmware, serial, Wi-Fi signal)
+00:09 +38: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow displays device info (model, firmware, serial, Wi-Fi signal)
+00:09 +38: [workspace]/frontend/test/history_flow_test.dart: generates a PDF document
+Helvetica-Bold has no Unicode support see https://github.com/DavBfr/dart_pdf/wiki/Fonts-Management
+Helvetica has no Unicode support see https://github.com/DavBfr/dart_pdf/wiki/Fonts-Management
+00:09 +39: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow displays device info (model, firmware, serial, Wi-Fi signal)
+00:09 +40: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow offline device shows offline Wi-Fi signal info
+00:10 +41: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow rename device prefilled dialog, validation, and update
+00:11 +42: [workspace]/frontend/test/phase11_account_support_test.dart: Phase 11: Account Page & Settings Live Persistence Account page renders all required rows
+00:12 +43: [workspace]/frontend/test/phase11_account_support_test.dart: Phase 11: Account Page & Settings Live Persistence Account page renders all required rows
+00:12 +44: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow remove device flow with destructive button and warning text
+00:12 +45: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow remove device flow with destructive button and warning text
+00:12 +46: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow remove device flow with destructive button and warning text
+00:12 +47: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow remove device flow with destructive button and warning text
+00:12 +48: [workspace]/frontend/test/device_settings_test.dart: Phase 10: Device Settings flow remove device flow with destructive button and warning text
+00:12 +49: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:12 +50: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:12 +51: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:13 +52: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:13 +53: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:13 +54: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:13 +55: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:14 +56: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:14 +57: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:15 +58: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:15 +59: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:15 +60: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:15 +61: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:15 +62: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:16 +63: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:16 +64: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:16 +65: [workspace]/frontend/test/phase13_integration_flow_test.dart: Phase 13 Integration Test: login > add device > open detail > manual run > view history > export
+00:16 +66: [workspace]/frontend/test/pump_control_test.dart: card gates commands online=true sending=true
+00:16 +67: [workspace]/frontend/test/pump_control_test.dart: card gates commands online=true sending=true
+00:17 +68: [workspace]/frontend/test/pump_control_test.dart: card gates commands online=true sending=true
+00:17 +69: [workspace]/frontend/test/pump_control_test.dart: card gates commands online=true sending=true
+00:17 +70: [workspace]/frontend/test/widget_test.dart: registration returns to the authenticated root screen
+00:17 +71: [workspace]/frontend/test/widget_test.dart: registration returns to the authenticated root screen
+00:17 +72: [workspace]/frontend/test/widget_test.dart: registration returns to the authenticated root screen
+00:17 +73: [workspace]/frontend/test/widget_test.dart: registration returns to the authenticated root screen
+00:17 +74: [workspace]/frontend/test/widget_test.dart: registration returns to the authenticated root screen
+00:18 +75: [workspace]/frontend/test/pump_control_test.dart: manual duration 30 sends once and blocks pending commands
+00:18 +76: [workspace]/frontend/test/pump_control_test.dart: manual duration 30 sends once and blocks pending commands
+00:18 +77: [workspace]/frontend/test/pump_control_test.dart: manual duration 30 sends once and blocks pending commands
+00:18 +78: [workspace]/frontend/test/pump_control_test.dart: manual duration 30 sends once and blocks pending commands
+00:18 +79: [workspace]/frontend/test/pump_control_test.dart: manual duration 30 sends once and blocks pending commands
+00:18 +80: [workspace]/frontend/test/pump_control_test.dart: manual duration 30 sends once and blocks pending commands
+00:18 +81: [workspace]/frontend/test/pump_control_test.dart: manual duration 30 sends once and blocks pending commands
+00:18 +82: [workspace]/frontend/test/pump_control_test.dart: manual duration 30 sends once and blocks pending commands
+00:18 +83: [workspace]/frontend/test/widget_test.dart: device list search appears only above six devices
+00:19 +84: [workspace]/frontend/test/pump_control_test.dart: manual duration 60 sends once and blocks pending commands
+00:19 +85: [workspace]/frontend/test/pump_control_test.dart: manual duration 60 sends once and blocks pending commands
+00:19 +86: [workspace]/frontend/test/widget_test.dart: profile tab shows account info and logout below the form
+00:19 +87: [workspace]/frontend/test/pump_control_test.dart: manual duration 300 sends once and blocks pending commands
+00:20 +88: [workspace]/frontend/test/widget_test.dart: device deletion requires confirmation and removes the row
+00:20 +89: [workspace]/frontend/test/pump_control_test.dart: manual duration 600 sends once and blocks pending commands
+00:20 +90: [workspace]/frontend/test/widget_test.dart: device creation carries generated ID into provisioning
+00:20 +91: [workspace]/frontend/test/pump_control_test.dart: low water prevents request and explains safety block
+00:21 +92: [workspace]/frontend/test/pump_control_test.dart: low water prevents request and explains safety block
+00:21 +93: [workspace]/frontend/test/widget_test.dart: detail shows running pump state
+00:21 +94: [workspace]/frontend/test/pump_control_test.dart: API error is displayed and sending flag is released
+00:21 +95: [workspace]/frontend/test/widget_test.dart: manual mode pauses schedules and auto mode restores them
+00:21 +96: [workspace]/frontend/test/widget_test.dart: detail shows missing sensor state
+00:22 +97: [workspace]/frontend/test/widget_test.dart: sensor grid marks values below configured threshold
+00:22 +98: [workspace]/frontend/test/widget_test.dart: pump control shows command-sending state
+00:23 +99: All tests passed!

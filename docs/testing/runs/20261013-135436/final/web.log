@@ -1,0 +1,11 @@
+Started: 2026-10-13T14:11:29.3437622+07:00
+Working directory: [workspace]\frontend
+Command: [workspace]\.runtime\flutter\bin\flutter.bat test --no-pub --platform chrome --reporter expanded test/add_device_web_test.dart
+Exit code: 1
+00:00 +0: loading [workspace]/frontend/test/add_device_web_test.dart
+00:00 +0 -1: loading [workspace]/frontend/test/add_device_web_test.dart [E]
+  Failed to load "test\add_device_web_test.dart": Connection closed before test suite loaded.
+00:00 +0 -1: Some tests failed.
+
+Failing tests:
+  [workspace]/frontend/test/add_device_web_test.dart: loading [workspace]/frontend/test/add_device_web_test.dart

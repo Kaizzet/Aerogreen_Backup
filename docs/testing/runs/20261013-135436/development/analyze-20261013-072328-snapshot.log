@@ -1,0 +1,10 @@
+Started: 2026-10-13T14:23:09.5361837+07:00
+Working directory: [workspace]\frontend
+Command: [workspace]\.runtime\flutter\bin\flutter.bat analyze --no-pub
+Exit code: 1
+Analyzing frontend...                                           
+
+   info - Statements in an if should be enclosed in a block. Try wrapping the statement in a block - lib\models\pump_schedule_validation.dart:15:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block. Try wrapping the statement in a block - test\api_session_test.dart:103:13 - curly_braces_in_flow_control_structures
+
+2 issues found. (ran in 15.8s)

@@ -37,7 +37,9 @@ class DioClient {
           return handler.next(options);
         },
         onError: (DioException error, handler) async {
-          if (error.response?.statusCode == 401) {
+          if (error.response?.statusCode == 401 &&
+              error.requestOptions.path != ApiConstants.refresh &&
+              error.requestOptions.extra['authRetried'] != true) {
             // Attempt refresh if refresh token exists
             final refreshToken = await secureStorage.read(key: 'refresh_token');
             if (refreshToken != null) {
@@ -57,6 +59,7 @@ class DioClient {
 
                   // Retry the original failed request with new token
                   final originalOptions = error.requestOptions;
+                  originalOptions.extra['authRetried'] = true;
                   originalOptions.headers['Authorization'] = 'Bearer $newAccessToken';
                   final retryResponse = await dio.fetch(originalOptions);
                   return handler.resolve(retryResponse);

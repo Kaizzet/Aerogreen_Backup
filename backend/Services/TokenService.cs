@@ -16,10 +16,12 @@ public interface ITokenService
 public class TokenService : ITokenService
 {
     private readonly IConfiguration _configuration;
+    private readonly TimeProvider _clock;
 
-    public TokenService(IConfiguration configuration)
+    public TokenService(IConfiguration configuration, TimeProvider? clock = null)
     {
         _configuration = configuration;
+        _clock = clock ?? TimeProvider.System;
     }
 
     public string CreateAccessToken(ApplicationUser user, IList<string> roles)
@@ -49,7 +51,7 @@ public class TokenService : ITokenService
             issuer: issuer,
             audience: audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(expiryMinutes),
+            expires: _clock.GetUtcNow().UtcDateTime.AddMinutes(expiryMinutes),
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

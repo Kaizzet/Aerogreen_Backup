@@ -1,0 +1,11 @@
+Started: 2026-10-13T13:55:11.7879243+07:00
+Working directory: [workspace]
+Command: dotnet test backend/tests/IOTAgriBackend.Tests.csproj --configuration Release --no-restore --logger trx;LogFileName=backend.trx --results-directory [workspace]\docs\testing\runs\20261013-135436\baseline
+Exit code: 0
+  IOTAgriBackend -> [workspace]\backend\bin\Release\net10.0\IOTAgriBackend.dll
+  IOTAgriBackend.Tests -> [workspace]\backend\tests\bin\Release\net10.0\IOTAgriBackend.Tests.dll
+Test run for [workspace]\backend\tests\bin\Release\net10.0\IOTAgriBackend.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+Results File: [workspace]\docs\testing\runs\20261013-135436\baseline\backend.trx
+
+Passed!  - Failed:     0, Passed:    65, Skipped:     0, Total:    65, Duration: 1 s - IOTAgriBackend.Tests.dll (net10.0)
