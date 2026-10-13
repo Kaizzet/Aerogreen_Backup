@@ -134,9 +134,7 @@ public class PumpScheduleDispatchService : BackgroundService
 
         try
         {
-            await PumpDispatchAttempt.PublishAsync(occurrence, command,
-                (item, token) => _mqtt.PublishPumpCommandAsync(device.DeviceKey, item, token),
-                TimeProvider.System, cancellationToken);
+            await _mqtt.PublishPumpCommandAsync(device.DeviceKey, command, cancellationToken);
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
@@ -144,6 +142,8 @@ public class PumpScheduleDispatchService : BackgroundService
             return;
         }
 
+        occurrence.DispatchedAt = DateTime.UtcNow;
+        occurrence.Schedule.LastDispatchedOccurrenceUtc = occurrence.OccurrenceUtc;
         await db.SaveChangesAsync(cancellationToken);
     }
 

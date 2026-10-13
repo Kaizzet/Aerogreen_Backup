@@ -159,7 +159,7 @@ public static class DeviceEndpoints
             return Results.Unauthorized();
         }
 
-        var device = await db.Devices.FirstOrDefaultAsync(DeviceAccess.OwnedDevice(id, userId), cancellationToken);
+        var device = await db.Devices.FirstOrDefaultAsync(d => d.Id == id && d.OwnerId == userId, cancellationToken);
         if (device is null)
         {
             return Results.NotFound();
@@ -179,7 +179,7 @@ public static class DeviceEndpoints
         var existing = await db.PumpCommands.FirstOrDefaultAsync(c => c.Id == request.CommandId, cancellationToken);
         if (existing is not null)
         {
-            if (!PumpCommandRules.Matches(existing, device.Id, request))
+            if (existing.DeviceId != device.Id || existing.IsOn != request.IsOn || existing.DurationSeconds != request.DurationSeconds)
             {
                 return Results.Conflict(new { error = "commandId was already used for a different command." });
             }

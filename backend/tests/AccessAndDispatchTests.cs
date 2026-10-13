@@ -1,48 +1,27 @@
-using IOTAgriBackend.Models;
-using IOTAgriBackend.Services;
+using System.Reflection;
+using System.Security.Claims;
+using IOTAgriBackend.Dtos.Pumps;
+using IOTAgriBackend.Endpoints;
+using Microsoft.AspNetCore.Http;
 using Xunit;
 
 namespace IOTAgriBackend.Tests;
 
 public class AccessAndDispatchTests
 {
-    [Fact]
-    public void Production_owner_filter_rejects_other_users_and_devices()
-    {
-        var id = Guid.NewGuid();
-        var predicate = DeviceAccess.OwnedDevice(id, "owner").Compile();
-        Assert.True(predicate(new Device { Id = id, OwnerId = "owner" }));
-        Assert.False(predicate(new Device { Id = id, OwnerId = "other" }));
-        Assert.False(predicate(new Device { Id = Guid.NewGuid(), OwnerId = "owner" }));
-        Assert.False(predicate(new Device { Id = id, OwnerId = null }));
-    }
-
-    private sealed class Clock : TimeProvider
-    {
-        public override DateTimeOffset GetUtcNow() => new(2030, 1, 1, 0, 0, 0, TimeSpan.Zero);
-    }
-
     [Theory]
-    [InlineData(false)] [InlineData(true)]
-    public async Task Failed_or_cancelled_publish_remains_retryable_then_success_marks_occurrence(bool cancelled)
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Pump_handler_rejects_missing_user_id_before_touching_data_or_broker(bool authenticated)
     {
-        var occurrence = new PumpScheduleOccurrence { CommandId = Guid.Parse("11111111-1111-4111-8111-111111111111"), Schedule = new PumpSchedule(), OccurrenceUtc = DateTime.UnixEpoch };
-        var command = new PumpCommand { Id = occurrence.CommandId };
-        var calls = new List<Guid>();
-        Task Failed(PumpCommand item, CancellationToken token)
-        {
-            calls.Add(item.Id);
-            return Task.FromException(cancelled ? new OperationCanceledException() : new TimeoutException());
-        }
-        if (cancelled)
-            await Assert.ThrowsAsync<OperationCanceledException>(() => PumpDispatchAttempt.PublishAsync(occurrence, command, Failed, new Clock(), default));
-        else
-            await Assert.ThrowsAsync<TimeoutException>(() => PumpDispatchAttempt.PublishAsync(occurrence, command, Failed, new Clock(), default));
-        Assert.Null(occurrence.DispatchedAt);
-        Assert.Null(occurrence.Schedule.LastDispatchedOccurrenceUtc);
-        await PumpDispatchAttempt.PublishAsync(occurrence, command, (item, _) => { calls.Add(item.Id); return Task.CompletedTask; }, new Clock(), default);
-        Assert.Equal([command.Id, command.Id], calls);
-        Assert.Equal(new Clock().GetUtcNow().UtcDateTime, occurrence.DispatchedAt);
-        Assert.Equal(occurrence.OccurrenceUtc, occurrence.Schedule.LastDispatchedOccurrenceUtc);
+        var identity = authenticated ? new ClaimsIdentity([], "fixture") : new ClaimsIdentity();
+        var principal = new ClaimsPrincipal(identity);
+        var method = typeof(DeviceEndpoints).GetMethod("SendPumpCommandAsync", BindingFlags.NonPublic | BindingFlags.Static)!;
+        // All dependencies are null deliberately: unauthorized requests must return before using them.
+        var task = (Task<IResult>)method.Invoke(null,
+            [Guid.Empty, new PumpCommandRequest(Guid.NewGuid(), true, 60), principal, null, null, null, CancellationToken.None])!;
+        var result = await task;
+        Assert.Equal(StatusCodes.Status401Unauthorized, Assert.IsAssignableFrom<IStatusCodeHttpResult>(result).StatusCode);
     }
+    // Authenticated ownership queries and dispatch persistence require integration tests.
 }

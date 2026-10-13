@@ -9,22 +9,14 @@ import '../../services/api_service.dart';
 enum AddDeviceStep { prepare, findDevice, wifi, connecting, nameAndPlace, done }
 
 class AddDeviceScreen extends StatefulWidget {
-  const AddDeviceScreen({super.key, this.apiService});
-
-  final ApiService? apiService;
+  const AddDeviceScreen({super.key});
 
   @override
   State<AddDeviceScreen> createState() => _AddDeviceScreenState();
 }
 
 class _AddDeviceScreenState extends State<AddDeviceScreen> {
-  late final ApiService _apiService;
-
-  @override
-  void initState() {
-    super.initState();
-    _apiService = widget.apiService ?? ApiService();
-  }
+  final ApiService _apiService = ApiService();
 
   AddDeviceStep _currentStep = AddDeviceStep.prepare;
   int _currentStepIndex = 0;
@@ -138,7 +130,6 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
       _connectionStage = ConnectionStage.connectingToDevice;
       _startConnectionTimeout();
     });
-    _simulateConnection();
   }
 
   void _startConnectionTimeout() {

@@ -18,22 +18,21 @@ public class TokenServiceTests
             ["Jwt:Key"] = key, ["Jwt:Issuer"] = "unit-tests", ["Jwt:Audience"] = "unit-clients",
             ["Jwt:AccessTokenExpiryMinutes"] = minutes?.ToString(),
         }).Build();
-    private sealed class Clock : TimeProvider
-    {
-        public override DateTimeOffset GetUtcNow() => new(2030, 1, 1, 0, 0, 0, TimeSpan.Zero);
-    }
 
     [Theory]
     [InlineData(null, 15)]
     [InlineData(30, 30)]
     public void Signs_claims_roles_and_configured_expiry(int? configured, int expected)
     {
-        var service = new TokenService(Configuration(configured), new Clock());
+        var service = new TokenService(Configuration(configured));
         var user = new ApplicationUser { Id = "fixture-user", Email = "fixture@example.invalid", FullName = "Fixture" };
+        var earliestExpiry = DateTime.UtcNow.AddMinutes(expected).AddSeconds(-1);
         var encoded = service.CreateAccessToken(user, ["User", "Admin"]);
+        var latestExpiry = DateTime.UtcNow.AddMinutes(expected).AddSeconds(1);
         var handler = new JwtSecurityTokenHandler();
         var token = handler.ReadJwtToken(encoded);
-        Assert.Equal(new Clock().GetUtcNow().UtcDateTime.AddMinutes(expected), token.ValidTo);
+        // Production has no injectable clock. Bound the timestamp, allowing JWT second precision.
+        Assert.InRange(token.ValidTo, earliestExpiry, latestExpiry);
         Assert.Equal("fixture-user", token.Subject);
         Assert.Equal("Fixture", token.Claims.Single(c => c.Type == "fullName").Value);
         Assert.Equal(2, token.Claims.Count(c => c.Type == ClaimTypes.Role));

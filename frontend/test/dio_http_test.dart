@@ -89,6 +89,9 @@ void main() {
         var refreshes = 0;
         final dio = Dio();
         dio.httpClientAdapter = _Adapter((request) async {
+          // Test-only circuit breaker: expose recursive retries without hanging the suite.
+          // An extra call still fails the assertions below; production is untouched.
+          if (refreshes + originals >= 6) return _body({}, 503);
           if (request.path.endsWith('/refresh')) {
             refreshes++;
             return _body({

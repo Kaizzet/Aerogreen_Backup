@@ -182,18 +182,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: const [
-                          Expanded(
-                            child: OutlineDangerButton(
-                              label: 'Google',
-                              onPressed: null, // simulate only
-                            ),
+                          OutlineDangerButton(
+                            label: 'Google',
+                            onPressed: null, // simulate only
                           ),
-                          SizedBox(width: 12),
-                          Expanded(
-                            child: OutlineDangerButton(
-                              label: 'Apple',
-                              onPressed: null,
-                            ),
+                          OutlineDangerButton(
+                            label: 'Apple',
+                            onPressed: null,
                           ),
                         ],
                       ),

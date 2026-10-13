@@ -25,11 +25,9 @@ class AuthController extends StateNotifier<AuthState> {
   }
 
   Future<void> _init() async {
-    try {
-      final current = await _repo.getCurrentUser();
-      if (mounted && current != null) state = state.copyWith(user: current);
-    } catch (error) {
-      if (mounted) state = state.copyWith(error: error.toString());
+    final current = await _repo.getCurrentUser();
+    if (current != null) {
+      state = state.copyWith(user: current);
     }
   }
 
@@ -59,12 +57,8 @@ class AuthController extends StateNotifier<AuthState> {
 
   Future<void> logout() async {
     state = state.copyWith(isLoading: true);
-    try {
-      await _repo.logout();
-      state = const AuthState();
-    } catch (error) {
-      state = state.copyWith(isLoading: false, error: error.toString());
-    }
+    await _repo.logout();
+    state = const AuthState();
   }
 
   void clearError() {

@@ -1,4 +1,4 @@
-import 'package:iotagri_app/models/pump_schedule_validation.dart';
+import 'package:iotagri_app/cupertino/devices/pump_schedules_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iotagri_app/cupertino/dashboard/farm_health_card.dart';
@@ -449,24 +449,78 @@ void main() {
     );
   });
 
-  group('Phase 13: Production Schedule Validation Rules', () {
-    test('mist length and interval use production inclusive bounds', () {
-      for (final value in ['', '0', '121', 'invalid']) {
-        expect(PumpScheduleValidation.mistLength(value), isNotNull);
+  group('Phase 13: Production Schedule Form Validation', () {
+    Future<void> openForm(WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1200, 1800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: AddScheduleDialog(
+            device: Device(
+              id: 'fixture-device',
+              name: 'Fixture tower',
+              isOnline: true,
+              createdAt: '2030-01-01',
+            ),
+          ),
+        ),
+      );
+    }
+
+    testWidgets('mist duration bounds are validated by the production form', (
+      tester,
+    ) async {
+      await openForm(tester);
+      final mist = find.byWidgetPredicate(
+        (widget) =>
+            widget is CupertinoTextField && widget.placeholder == '1-120',
+      );
+      for (final value in ['0', '121', 'invalid']) {
+        await tester.enterText(mist, value);
+        await tester.pump();
+        expect(find.text('Thời gian phun từ 1-120 giây'), findsWidgets);
       }
-      expect(PumpScheduleValidation.mistLength('1'), isNull);
-      expect(PumpScheduleValidation.mistLength('120'), isNull);
-      expect(PumpScheduleValidation.interval('1', '60'), isNotNull);
-      expect(PumpScheduleValidation.interval('1', '59'), isNull);
-      expect(PumpScheduleValidation.interval('0', '10'), isNotNull);
-      expect(PumpScheduleValidation.interval('61', '10'), isNotNull);
+      await tester.enterText(mist, '');
+      await tester.pump();
+      expect(find.text('Vui lòng nhập thời gian phun'), findsWidgets);
+      for (final value in ['1', '120']) {
+        await tester.enterText(mist, value);
+        await tester.pump();
+        expect(find.text('Thời gian phun từ 1-120 giây'), findsNothing);
+      }
     });
-    test('time window preserves current same-day form behavior', () {
-      final start=DateTime(2030,1,1,6);
-      expect(PumpScheduleValidation.timeWindow(start,DateTime(2030,1,1,18)),isNull);
-      expect(PumpScheduleValidation.timeWindow(start,start),isNotNull);
-      // Backend supports overnight; current frontend form rejects it.
-      expect(PumpScheduleValidation.timeWindow(DateTime(2030,1,1,18),start),isNotNull);
+    testWidgets('interval must exceed mist duration and stay within bounds', (
+      tester,
+    ) async {
+      await openForm(tester);
+      final mist = find.byWidgetPredicate(
+        (widget) =>
+            widget is CupertinoTextField && widget.placeholder == '1-120',
+      );
+      final interval = find.byWidgetPredicate(
+        (widget) =>
+            widget is CupertinoTextField && widget.placeholder == '1-60',
+      );
+      await tester.enterText(mist, '60');
+      await tester.enterText(interval, '1');
+      await tester.pump();
+      expect(
+        find.text('Thời gian phun phải nhỏ hơn khoảng cách'),
+        findsWidgets,
+      );
+      await tester.enterText(mist, '59');
+      await tester.pump();
+      expect(
+        find.text('Thời gian phun phải nhỏ hơn khoảng cách'),
+        findsNothing,
+      );
+      for (final value in ['0', '61', 'invalid']) {
+        await tester.enterText(interval, value);
+        await tester.pump();
+        expect(find.text('Khoảng cách từ 1-60 phút'), findsWidgets);
+      }
     });
   });
 }

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Reflection;
 using IOTAgriBackend.Models;
 using IOTAgriBackend.Services;
 using Microsoft.Extensions.Configuration;
@@ -13,9 +14,16 @@ namespace IOTAgriBackend.Tests;
 
 public class MqttPublisherTests
 {
-    private static MqttIngestionService Service(Mock<IMqttClient> client) => new(
-        Mock.Of<IServiceScopeFactory>(), new ConfigurationBuilder().Build(),
-        NullLogger<MqttIngestionService>.Instance, client.Object);
+    private static MqttIngestionService Service(Mock<IMqttClient> client)
+    {
+        var service = new MqttIngestionService(Mock.Of<IServiceScopeFactory>(),
+            new ConfigurationBuilder().Build(), NullLogger<MqttIngestionService>.Instance);
+        // Test-only seam: production constructor creates its own client. No service is started.
+        var field = typeof(MqttIngestionService).GetField("_mqttClient", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        ((IDisposable)field.GetValue(service)!).Dispose();
+        field.SetValue(service, client.Object);
+        return service;
+    }
 
     [Fact]
     public async Task Disconnected_publisher_does_not_attempt_delivery()

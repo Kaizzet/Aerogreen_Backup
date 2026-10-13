@@ -88,7 +88,7 @@ class ApiService {
       body: jsonEncode({'refreshToken': refreshToken}),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       await _saveTokens(
         data['accessToken'] as String,
@@ -189,7 +189,7 @@ class ApiService {
 
   // Auth methods
   Future<Map<String, dynamic>> login(String email, String password) async {
-    final response = await _client.post(
+    final response = await http.post(
       Uri.parse('${ApiConstants.baseUrl}${ApiConstants.login}'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email, 'password': password}),
@@ -212,7 +212,7 @@ class ApiService {
     String password,
     String fullName,
   ) async {
-    final response = await _client.post(
+    final response = await http.post(
       Uri.parse('${ApiConstants.baseUrl}${ApiConstants.register}'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({

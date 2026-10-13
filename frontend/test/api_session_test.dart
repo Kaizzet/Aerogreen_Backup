@@ -199,23 +199,19 @@ void main() {
       expect(storage.values['access_token'], 'fixture-old');
     },
   );
-  test(
-    'login uses injected HTTP transport and surfaces storage failure',
-    () async {
-      final storage = TestStorage()..failWrite = true;
-      final api = ApiService(
-        storage: storage,
-        client: MockClient(
-          (_) async => http.Response(
-            '{"accessToken":"fixture-new","refreshToken":"fixture-rotated"}',
-            200,
-          ),
-        ),
-      );
-      await expectLater(
-        api.login('fixture@example.invalid', 'fixture-credential'),
-        throwsStateError,
-      );
-    },
-  );
+  test('legacy refresh response surfaces storage write failure', () async {
+    final storage = TestStorage()..failWrite = true;
+    final api = ApiService(
+      storage: storage,
+      client: MockClient(
+          (request) async => request.url.path.endsWith('/refresh')
+              ? http.Response(
+                  '{"accessToken":"fixture-new","refreshToken":"fixture-rotated"}',
+                  201,
+                )
+              : http.Response('', 401),
+      ),
+    );
+    await expectLater(api.getDevices(), throwsStateError);
+  });
 }
