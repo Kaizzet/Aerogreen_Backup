@@ -11,13 +11,13 @@ class GaugeRing extends StatelessWidget {
   final IconData icon;
 
   const GaugeRing({
-    Key? key,
+    super.key,
     required this.label,
     required this.value,
     required this.unit,
     required this.color,
     required this.icon,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

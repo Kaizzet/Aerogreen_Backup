@@ -31,7 +31,7 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
   String _selectedNetwork = '';
   final _wifiPasswordController = TextEditingController();
   bool _is5GHz = false;
-  List<String> _networks = ['Wi-Fi Home', 'IOTAgri-Setup', 'Guest Network'];
+  final List<String> _networks = ['Wi-Fi Home', 'IOTAgri-Setup', 'Guest Network'];
 
   // Step 4: Connecting
   ConnectionStage _connectionStage = ConnectionStage.connectingToDevice;

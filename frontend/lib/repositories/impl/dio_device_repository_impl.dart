@@ -76,7 +76,7 @@ class DioDeviceRepositoryImpl implements DeviceRepository {
       ApiConstants.claimDevice,
       data: {
         'code': code,
-        if (name != null) 'name': name,
+        'name': ?name,
       },
     );
     return Device.fromJson(response.data as Map<String, dynamic>);

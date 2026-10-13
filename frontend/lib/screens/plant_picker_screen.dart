@@ -11,7 +11,6 @@ import '../core/theme/app_text.dart';
 import '../data/models.dart';
 import '../data/mock_data.dart';
 import '../providers/data_providers.dart';
-import '../providers/user_provider.dart';
 
 /// Plant Picker tab – matches the design in Phase 5.
 class PlantPickerScreen extends ConsumerWidget {
@@ -19,9 +18,7 @@ class PlantPickerScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProfileProvider);
     final activePlant = ref.watch(currentPlantProvider);
-    final plant = activePlant.plant;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -50,7 +47,7 @@ class PlantPickerScreen extends ConsumerWidget {
                   itemCount: mockPlants.length,
                   itemBuilder: (context, index) {
                     final plant = mockPlants[index];
-                    final isCurrent = plant.id == activePlant.id;
+                    final isCurrent = plant.id == activePlant.plant.id;
                     return _PlantCard(
                       plant: plant,
                       isCurrent: isCurrent,
@@ -61,7 +58,7 @@ class PlantPickerScreen extends ConsumerWidget {
                                 context: context,
                                 builder: (_) => AlertDialog(
                                   title: const Text('Xác nhận'),
-                                  content: Text('Bạn sẽ thay thế "${activePlant.name}" bằng "${plant.name}". Tiếp tục?'),
+                                  content: Text('Bạn sẽ thay thế "${activePlant.plant.name}" bằng "${plant.name}". Tiếp tục?'),
                                   actions: [
                                     TextButton(
                                       onPressed: () => Navigator.pop(context, false),
@@ -108,7 +105,6 @@ class _PlantCard extends StatelessWidget {
     required this.plant,
     required this.isCurrent,
     this.onStart,
-    super.key,
   });
 
   final Plant plant;
@@ -130,7 +126,7 @@ class _PlantCard extends StatelessWidget {
               height: 80,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: plant.tintColor.withOpacity(0.15),
+                color: plant.tintColor.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
               ),
               alignment: Alignment.center,

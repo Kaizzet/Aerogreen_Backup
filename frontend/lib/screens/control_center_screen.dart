@@ -5,14 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/widgets/section_chip.dart';
 import '../core/widgets/page_header.dart';
-import '../core/widgets/status_pill.dart';
 import '../core/widgets/info_row.dart';
 import '../core/widgets/gradient_button.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_text.dart';
 import '../providers/data_providers.dart';
-import '../data/models.dart';
-import '../data/mock_data.dart';
 
 /// Control Center tab – matches Phase 6 design.
 class ControlCenterScreen extends ConsumerWidget {
@@ -20,7 +17,6 @@ class ControlCenterScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final activePlant = ref.watch(currentPlantProvider);
     final mode = ref.watch(controlModeProvider);
     final isSmart = mode == 'smart';
 
@@ -64,7 +60,7 @@ class _ModeToggle extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.sage.withOpacity(0.2),
+        color: AppColors.sage.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(30),
       ),
       padding: const EdgeInsets.all(4),
@@ -131,7 +127,7 @@ class _ModeToggle extends ConsumerWidget {
 // -----------------------------------------------------------------------------
 // Smart mode UI.
 class _SmartModeCard extends ConsumerWidget {
-  const _SmartModeCard({super.key});
+  const _SmartModeCard();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -169,7 +165,7 @@ class _SmartModeCard extends ConsumerWidget {
             const SizedBox(height: 16),
             // Info rows – translucent background
             Container(
-              decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
+              decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(12)),
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
               child: Column(
                 children: [
@@ -191,7 +187,7 @@ class _SmartModeCard extends ConsumerWidget {
 // -----------------------------------------------------------------------------
 // Manual mode UI – pump, nutrient spray, footnote.
 class _ManualModeSection extends ConsumerWidget {
-  const _ManualModeSection({super.key});
+  const _ManualModeSection();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -292,6 +288,7 @@ class _ManualModeSection extends ConsumerWidget {
                         const SnackBar(content: Text('Đang phun...')),
                       );
                       await Future.delayed(const Duration(seconds: 1));
+                      if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Hoàn thành!')),
                       );

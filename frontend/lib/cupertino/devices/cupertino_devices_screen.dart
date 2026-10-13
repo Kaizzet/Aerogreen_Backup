@@ -20,7 +20,7 @@ class _CupertinoDevicesScreenState extends State<CupertinoDevicesScreen> {
   late final ApiService _apiService;
   List<Device> _devices = const [];
   bool _isLoading = true;
-  bool _isCreating = false;
+  final bool _isCreating = false;
   String? _deletingDeviceId;
   String? _errorMessage;
   String _searchQuery = '';

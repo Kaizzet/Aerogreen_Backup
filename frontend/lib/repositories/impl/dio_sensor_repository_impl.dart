@@ -33,7 +33,7 @@ class DioSensorRepositoryImpl implements SensorRepository {
       ApiConstants.deviceAggregatedReadings(deviceId),
       queryParameters: {
         'range': range,
-        if (interval != null) 'interval': interval,
+        'interval': ?interval,
       },
     );
     final list = response.data as List<dynamic>;

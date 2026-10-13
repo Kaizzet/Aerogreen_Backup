@@ -26,7 +26,7 @@ class DioPumpRepositoryImpl implements PumpRepository {
       data: {
         'commandId': commandId,
         'on': isOn,
-        if (durationSeconds != null) 'durationSeconds': durationSeconds,
+        'durationSeconds': ?durationSeconds,
       },
     );
     return PumpCommand.fromJson(response.data as Map<String, dynamic>);
@@ -44,7 +44,7 @@ class DioPumpRepositoryImpl implements PumpRepository {
       queryParameters: {
         'page': page,
         'pageSize': pageSize,
-        if (rangeHours != null) 'rangeHours': rangeHours,
+        'rangeHours': ?rangeHours,
       },
     );
     final data = response.data as Map<String, dynamic>;

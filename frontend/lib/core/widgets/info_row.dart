@@ -9,11 +9,11 @@ class InfoRow extends StatelessWidget {
   final IconData? icon;
 
   const InfoRow({
-    Key? key,
+    super.key,
     required this.label,
     required this.value,
     this.icon,
-  }) : super(key: key);
+  });
 
   static IconData _defaultIcon(String label) {
     final l = label.toUpperCase();

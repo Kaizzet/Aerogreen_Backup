@@ -9,10 +9,6 @@ import 'screens/home_screen.dart';
 import 'screens/plant_picker_screen.dart';
 import 'screens/control_center_screen.dart';
 import 'screens/more_screen.dart';
-import 'screens/alerts_screen.dart';
-import 'screens/settings_screen.dart';
-import 'screens/harvest_screen.dart';
-import 'screens/help_screen.dart';
 import 'providers/auth_controller.dart';
 import 'core/widgets/floating_pill_nav_bar.dart';
 

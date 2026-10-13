@@ -64,7 +64,7 @@ class HelpScreen extends ConsumerWidget {
 
 // Simple FAQ accordion using ExpansionPanelList.
 class _FaqAccordion extends StatefulWidget {
-  const _FaqAccordion({Key? key}) : super(key: key);
+  const _FaqAccordion();
 
   @override
   State<_FaqAccordion> createState() => _FaqAccordionState();

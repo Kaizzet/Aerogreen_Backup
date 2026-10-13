@@ -60,6 +60,10 @@ class AuthController extends StateNotifier<AuthState> {
     await _repo.logout();
     state = const AuthState();
   }
+
+  void clearError() {
+    state = state.copyWith(error: null);
+  }
 }
 
 // Providers

@@ -53,8 +53,8 @@ class DioAlertRepositoryImpl implements AlertRepository {
     final response = await _dio.put(
       ApiConstants.alertSettings(deviceId),
       data: {
-        if (highTemperatureC != null) 'highTemperatureC': highTemperatureC,
-        if (lowWaterLevelPercent != null) 'lowWaterLevelPercent': lowWaterLevelPercent,
+        'highTemperatureC': ?highTemperatureC,
+        'lowWaterLevelPercent': ?lowWaterLevelPercent,
       },
     );
     return response.data as Map<String, dynamic>;

@@ -52,11 +52,18 @@ class _SuccessfulAuthApiService extends ApiService {
         jsonEncode({
           'sub': 'user-1',
           'email': email,
-          'exp': DateTime.now().add(const Duration(hours: 1)).millisecondsSinceEpoch ~/ 1000,
+          'exp':
+              DateTime.now()
+                  .add(const Duration(hours: 1))
+                  .millisecondsSinceEpoch ~/
+              1000,
         }),
       ),
     ).replaceAll('=', '');
-    return {'accessToken': 'header.$payload.signature', 'refreshToken': 'refresh'};
+    return {
+      'accessToken': 'header.$payload.signature',
+      'refreshToken': 'refresh',
+    };
   }
 }
 
@@ -198,12 +205,12 @@ class _DeviceListApiService extends ApiService {
   Future<List<dynamic>> getDevices() async => [
     for (var index = 0; index < count; index++)
       if (!deletedDeviceIds.contains('device-$index'))
-      {
-        'id': 'device-$index',
-        'name': 'Greenhouse $index',
-        'isOnline': true,
-        'createdAt': '2026-10-02T00:00:00Z',
-      },
+        {
+          'id': 'device-$index',
+          'name': 'Greenhouse $index',
+          'isOnline': true,
+          'createdAt': '2026-10-02T00:00:00Z',
+        },
   ];
 
   @override
@@ -337,42 +344,47 @@ void main() {
     expect(authProvider.errorMessage, isNotNull);
   });
 
-  test('access token role claim drives admin routing, including role arrays', () {
-    final apiService = ApiService();
-    String tokenWithRole(Object? role) {
-      final payload = <String, dynamic>{
-        'sub': 'user-1',
-        'email': 'user@example.com',
-        'exp':
-            DateTime.now()
-                .add(const Duration(hours: 1))
-                .millisecondsSinceEpoch ~/
-            1000,
-        ApiService.roleClaimType: ?role,
-      };
-      final encoded = base64UrlEncode(
-        utf8.encode(jsonEncode(payload)),
-      ).replaceAll('=', '');
-      return 'header.$encoded.signature';
-    }
+  test(
+    'access token role claim drives admin routing, including role arrays',
+    () {
+      final apiService = ApiService();
+      String tokenWithRole(Object? role) {
+        final payload = <String, dynamic>{
+          'sub': 'user-1',
+          'email': 'user@example.com',
+          'exp':
+              DateTime.now()
+                  .add(const Duration(hours: 1))
+                  .millisecondsSinceEpoch ~/
+              1000,
+          ApiService.roleClaimType: ?role,
+        };
+        final encoded = base64UrlEncode(
+          utf8.encode(jsonEncode(payload)),
+        ).replaceAll('=', '');
+        return 'header.$encoded.signature';
+      }
 
-    expect(
-      apiService.userFromAccessToken(tokenWithRole('User'))!.isAdmin,
-      isFalse,
-    );
-    expect(
-      apiService.userFromAccessToken(tokenWithRole('Admin'))!.isAdmin,
-      isTrue,
-    );
-    expect(
-      apiService.userFromAccessToken(tokenWithRole(['User', 'Admin']))!.isAdmin,
-      isTrue,
-    );
-    expect(
-      apiService.userFromAccessToken(tokenWithRole(null))!.isAdmin,
-      isFalse,
-    );
-  });
+      expect(
+        apiService.userFromAccessToken(tokenWithRole('User'))!.isAdmin,
+        isFalse,
+      );
+      expect(
+        apiService.userFromAccessToken(tokenWithRole('Admin'))!.isAdmin,
+        isTrue,
+      );
+      expect(
+        apiService
+            .userFromAccessToken(tokenWithRole(['User', 'Admin']))!
+            .isAdmin,
+        isTrue,
+      );
+      expect(
+        apiService.userFromAccessToken(tokenWithRole(null))!.isAdmin,
+        isFalse,
+      );
+    },
+  );
 
   testWidgets('dashboard shows gateway status summary', (
     WidgetTester tester,
@@ -469,7 +481,9 @@ void main() {
     expect(find.byType(CupertinoSearchTextField), findsOneWidget);
   });
 
-  testWidgets('device tab keeps the dashboard menu', (WidgetTester tester) async {
+  testWidgets('device tab keeps the dashboard menu', (
+    WidgetTester tester,
+  ) async {
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -651,6 +665,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    await tester.ensureVisible(find.text('Thủ công'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Thủ công'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Chuyển'));

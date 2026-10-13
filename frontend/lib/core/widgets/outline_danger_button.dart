@@ -9,11 +9,11 @@ class OutlineDangerButton extends StatelessWidget {
   final IconData? icon;
 
   const OutlineDangerButton({
-    Key? key,
+    super.key,
     required this.label,
     this.onPressed,
     this.icon,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

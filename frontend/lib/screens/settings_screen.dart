@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import '../core/widgets/page_header.dart';
 import '../core/widgets/section_chip.dart';
 import '../core/theme/app_colors.dart';
-import '../providers/settings_provider.dart';
 
 /// Settings screen – unit/language selection and alert toggles.
 class SettingsScreen extends ConsumerWidget {
@@ -15,8 +14,6 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final settings = ref.watch(settingsProvider);
-    final notifier = ref.read(settingsProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(

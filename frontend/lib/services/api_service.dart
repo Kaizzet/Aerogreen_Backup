@@ -597,7 +597,7 @@ class ApiService {
           if (localEnd != null)
             'endTime': '${localEnd.hour.toString().padLeft(2, '0')}:'
                 '${localEnd.minute.toString().padLeft(2, '0')}:00',
-          if (intervalMinutes != null) 'intervalMinutes': intervalMinutes,
+          'intervalMinutes': ?intervalMinutes,
           'timeZone': 'Asia/Ho_Chi_Minh',
         }),
       ),

@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+  import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
 import '../../models/device.dart';
@@ -564,8 +564,15 @@ class _AddScheduleDialogState extends State<AddScheduleDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
+    return PopScope(
+      canPop: !_hasUnsavedChanges,
+      onPopInvokedWithResult: (didPop, _) async {
+        if (didPop || !_hasUnsavedChanges) return;
+        final navigator = Navigator.of(context);
+        if (await _onWillPop()) {
+          navigator.pop();
+        }
+      },
       child: CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
           middle: const Text('Thêm lịch trình'),

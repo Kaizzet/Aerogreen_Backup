@@ -2,20 +2,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
-import 'package:go_router/go_router.dart';
 
-import '../core/widgets/page_header.dart';
 import '../core/widgets/status_pill.dart';
 import '../core/widgets/info_row.dart';
 import '../core/widgets/gauge_ring.dart';
-import '../core/widgets/alert_row.dart';
 import '../core/widgets/skeleton.dart'; // placeholder skeleton widget
-import '../providers/auth_controller.dart';
 import '../providers/data_providers.dart';
 import '../providers/user_provider.dart';
 import '../data/models.dart';
-import '../data/mock_data.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_text.dart';
 
@@ -44,7 +38,6 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final auth = ref.watch(authControllerProvider);
     final user = ref.watch(userProfileProvider);
     final activePlant = ref.watch(currentPlantProvider);
     final sensorAsync = ref.watch(sensorStreamProvider);
@@ -106,14 +99,14 @@ class HomeScreen extends ConsumerWidget {
                       return _HeroCard(activePlant: activePlant, sensor: sensor, healthPercent: health);
                     },
                     loading: () => Skeleton(height: 180, borderRadius: 28),
-                    error: (_, __) => const Text('Lỗi tải cảm biến'),
+                    error: (_, _) => const Text('Lỗi tải cảm biến'),
                   ),
                   const SizedBox(height: 24),
                   // Sensor card
                   sensorAsync.when(
                     data: (sensor) => _SensorCard(activePlant: activePlant, sensor: sensor),
                     loading: () => Skeleton(height: 140, borderRadius: 24),
-                    error: (_, __) => const Text('Lỗi cảm biến'),
+                    error: (_, _) => const Text('Lỗi cảm biến'),
                   ),
                   const SizedBox(height: 24),
                   // Care schedule card
@@ -169,7 +162,7 @@ class _HeroCard extends StatelessWidget {
             children: [
               // Translucent chip
               Container(
-                decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
+                decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(12)),
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -197,7 +190,7 @@ class _HeroCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
                 child: LinearProgressIndicator(
                   value: progress,
-                  backgroundColor: Colors.white.withOpacity(0.2),
+                  backgroundColor: Colors.white.withValues(alpha: 0.2),
                   valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                   minHeight: 8,
                 ),

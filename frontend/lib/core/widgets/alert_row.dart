@@ -1,6 +1,5 @@
 // lib/core/widgets/alert_row.dart
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
 import '../../data/models.dart'; // Assuming AppAlert is defined here
 
 /// A row representing a single alert with an action button.

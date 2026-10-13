@@ -1,17 +1,16 @@
 // lib/core/widgets/floating_pill_nav_bar.dart
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../theme/app_colors.dart';
 
 /// A floating bottom navigation bar with a pill‑shaped background for the selected
 /// tab. It mirrors the design described in Phase 3.
 class FloatingPillNavBar extends StatelessWidget {
   const FloatingPillNavBar({
-    Key? key,
+    super.key,
     required this.currentIndex,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   final int currentIndex;
   final void Function(int) onTap;

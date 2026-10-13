@@ -6,12 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/widgets/section_chip.dart';
 import '../core/widgets/page_header.dart';
 import '../core/widgets/outline_danger_button.dart';
-import '../core/widgets/info_row.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_text.dart';
 import '../providers/auth_controller.dart';
 import '../providers/user_provider.dart';
-import '../providers/settings_provider.dart';
 import 'package:go_router/go_router.dart';
 
 /// "More" / "Khác" tab – profile and navigable rows.
@@ -21,7 +19,6 @@ class MoreScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProfileProvider);
-    final settings = ref.watch(settingsProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -71,7 +68,7 @@ class MoreScreen extends ConsumerWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                         decoration: BoxDecoration(
-                          color: AppColors.mint.withOpacity(0.2),
+                          color: AppColors.mint.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Text('Pro', style: TextStyle(color: AppColors.mint, fontWeight: FontWeight.w600)),
@@ -160,7 +157,7 @@ class _ListRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: AppColors.mint.withOpacity(0.2),
+        backgroundColor: AppColors.mint.withValues(alpha: 0.2),
         child: Icon(icon, color: AppColors.mint),
       ),
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
